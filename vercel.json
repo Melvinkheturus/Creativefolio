@@ -1,13 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "installCommand": "npm install",
-  "framework": "nextjs",
-  "regions": ["all"],
-  "git": {
-    "deploymentEnabled": {
-      "main": true
+  "regions": ["sfo1"],
+  "functions": {
+    "api/*.ts": {
+      "region": "sfo1"
+    },
+    "pages/api/*.ts": {
+      "region": "sfo1"
     }
   },
   "headers": [
