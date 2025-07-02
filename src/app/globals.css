@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #000000;
@@ -28,73 +30,81 @@
   }
 }
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
+@layer components {
+  .bento-card {
+    @apply bg-[#121212] rounded-2xl shadow-lg overflow-hidden transition-all duration-300;
+  }
+
+  .bento-card:hover {
+    @apply shadow-xl;
+    box-shadow: 0 8px 20px rgba(165, 108, 255, 0.1);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-[#7F5AF0] to-[#2CB67D] inline-block text-transparent bg-clip-text;
+  }
+
+  .tag {
+    @apply text-xs font-medium py-1 px-2 rounded-full bg-[#1D1D1D] text-gray-300;
+  }
+
+  .skill-tag {
+    @apply inline-flex items-center px-3 py-1 mr-2 mb-2 text-xs rounded-full bg-[#1D1D1D] text-gray-200 hover:bg-[#232323] transition-all duration-200;
+  }
+
+  .card-title {
+    @apply text-lg font-bold mb-3;
+  }
+
+  .badge {
+    @apply inline-flex items-center space-x-2 bg-[#1D1D1D] rounded-full px-3 py-1.5 text-sm text-gray-300 hover:bg-[#252525] transition-all duration-200;
+  }
+
+  .glassy-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
 }
 
-/* Card styling */
-.bento-card {
-  @apply bg-[#121212] rounded-2xl shadow-lg overflow-hidden transition-all duration-300;
-}
+@layer utilities {
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
 
-.bento-card:hover {
-  @apply shadow-xl;
-  box-shadow: 0 8px 20px rgba(165, 108, 255, 0.1);
-}
+  .hover-scale:hover {
+    transform: scale(1.03);
+  }
 
-/* Gradient text animation */
-.gradient-text {
-  background: linear-gradient(
-    to right,
-    #A56CFF,
-    #9D4EDA,
-    #C278FF,
-    #A56CFF
-  );
-  background-size: 200% auto;
-  color: transparent;
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: gradient 3s linear infinite;
-}
+  .hover-glow {
+    transition: box-shadow 0.3s ease;
+  }
 
-.tag {
-  @apply text-xs font-medium py-1 px-2 rounded-full bg-[#1D1D1D] text-gray-300;
-}
+  .hover-glow:hover {
+    box-shadow: 0 0 15px rgba(165, 108, 255, 0.3);
+  }
 
-.skill-tag {
-  @apply inline-flex items-center px-3 py-1 mr-2 mb-2 text-xs rounded-full bg-[#1D1D1D] text-gray-200 hover:bg-[#232323] transition-all duration-200;
-}
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 
-.card-title {
-  @apply text-lg font-bold mb-3;
-}
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
 
-/* Micro-interactions */
-.hover-scale {
-  transition: transform 0.3s ease;
-}
-
-.hover-scale:hover {
-  transform: scale(1.03);
-}
-
-.hover-glow {
-  transition: box-shadow 0.3s ease;
-}
-
-.hover-glow:hover {
-  box-shadow: 0 0 15px rgba(165, 108, 255, 0.3);
-}
-
-.animate-pulse-slow {
-  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 @keyframes gradient {
@@ -115,20 +125,6 @@ body {
   }
 }
 
-/* Pill badges */
-.badge {
-  @apply inline-flex items-center space-x-2 bg-[#1D1D1D] rounded-full px-3 py-1.5 text-sm text-gray-300 hover:bg-[#252525] transition-all duration-200;
-}
-
-.badge:hover {
-  box-shadow: 0 0 10px rgba(165, 108, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
 @keyframes float {
   0% {
     transform: translateY(0px);
@@ -138,23 +134,5 @@ body {
   }
   100% {
     transform: translateY(0px);
-  }
-}
-
-.glassy-effect {
-  @apply bg-white/10 backdrop-blur-md border border-white/20;
-}
-
-.text-balance {
-  text-wrap: balance;
-}
-
-@layer components {
-  .gradient-text {
-    @apply bg-gradient-to-r from-[#7F5AF0] to-[#2CB67D] inline-block text-transparent bg-clip-text;
-  }
-  
-  .glassy-effect {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
 }
