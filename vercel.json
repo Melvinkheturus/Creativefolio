@@ -1,14 +1,6 @@
 {
   "version": 2,
   "regions": ["sfo1"],
-  "functions": {
-    "api/*.ts": {
-      "region": "sfo1"
-    },
-    "pages/api/*.ts": {
-      "region": "sfo1"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
