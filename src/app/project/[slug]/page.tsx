@@ -13,6 +13,7 @@ import ProjectTechStack from "../../components/project/ProjectTechStack";
 import ProjectProblemSolution from "../../components/project/ProjectProblemSolution";
 import ProjectFeatures from "../../components/project/ProjectFeatures";
 import ProjectVisualShowcase from "../../components/project/ProjectVisualShowcase";
+import MobileVisualShowcase from "../../components/project/MobileVisualShowcase";
 import ProjectProcess from "../../components/project/ProjectProcess";
 import ProjectResults from "../../components/project/ProjectResults";
 import ProjectLinks from "../../components/project/ProjectLinks";
@@ -112,14 +113,23 @@ export default function ProjectDetailPage() {
             />
           </div>
           
-          {/* Features - Full width */}
+          {/* Features and Visual Showcase */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectFeatures features={project.features} />
-          </div>
-          
-          {/* Visual Showcase - Full width */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectVisualShowcase images={project.images} />
+            {project.type === "Mobile" ? (
+              <MobileVisualShowcase images={project.images} features={project.features} />
+            ) : (
+              <>
+                {/* Features - Full width */}
+                <div className="mb-6">
+                  <ProjectFeatures features={project.features} />
+                </div>
+                
+                {/* Visual Showcase - Full width */}
+                <div>
+                  <ProjectVisualShowcase images={project.images} />
+                </div>
+              </>
+            )}
           </div>
           
           {/* Process - Full width */}

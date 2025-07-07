@@ -2,12 +2,32 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Lens } from "@/components/magicui/lens";
+
+interface TechItem {
+  name: string;
+  icon?: string;
+}
+
+interface Project {
+  title: string;
+  subtitle: string;
+  category: string;
+  timeline: string;
+  role: string;
+  techStack?: TechItem[];
+  heroImage?: string;
+  thumbnail: string;
+}
 
 type ProjectHeroProps = {
-  project: any;
+  project: Project;
 };
 
 export default function ProjectHero({ project }: ProjectHeroProps) {
+  // Get techStack safely with fallback to empty array
+  const techStack = project.techStack || [];
+  
   return (
     <motion.div
       className="bento-card overflow-hidden"
@@ -34,13 +54,13 @@ export default function ProjectHero({ project }: ProjectHeroProps) {
           
           <div className="mt-6">
             <div className="flex flex-wrap">
-              {project.techStack?.slice(0, 4).map((tech, index) => (
+              {techStack.slice(0, 4).map((tech: TechItem, index: number) => (
                 <span key={index} className="skill-tag">
                   {tech.name}
                 </span>
               ))}
-              {project.techStack?.length > 4 && (
-                <span className="skill-tag">+{project.techStack.length - 4} more</span>
+              {techStack.length > 4 && (
+                <span className="skill-tag">+{techStack.length - 4} more</span>
               )}
             </div>
           </div>
@@ -57,15 +77,24 @@ export default function ProjectHero({ project }: ProjectHeroProps) {
           <motion.div
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.5 }}
-            className="w-full h-full"
+            className="w-full h-full relative z-0 overflow-hidden"
           >
-            <Image
-              src={project.heroImage || project.thumbnail}
-              alt={project.title}
-              width={600}
-              height={400}
-              className="w-full h-full object-cover"
-            />
+            <Lens
+              zoomFactor={1.5}
+              lensSize={150}
+              isStatic={false}
+              ariaLabel="Zoom Image"
+              lensColor="#121212"
+            >
+              <Image
+                src={project.thumbnail}
+                alt={project.title}
+                width={600}
+                height={400}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </Lens>
           </motion.div>
           
           <div className="absolute bottom-4 right-4 z-20">

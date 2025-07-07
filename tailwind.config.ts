@@ -17,6 +17,15 @@ const config: Config = {
         inter: ["var(--font-inter)"],
         allura: ["var(--font-allura)"],
       },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '200% 50%' },
+        },
+      },
+      animation: {
+        shimmer: 'shimmer 4s linear infinite',
+      },
     },
   },
   plugins: [],

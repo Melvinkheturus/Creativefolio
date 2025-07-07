@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -18,15 +16,13 @@
 # misc
 .DS_Store
 *.pem
+.env*.local
+.env
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# local env files
-.env*.local
-.env
 
 # vercel
 .vercel
@@ -39,11 +35,6 @@ next-env.d.ts
 .vscode/
 .idea/
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# cache
+.swc/
+.turbo

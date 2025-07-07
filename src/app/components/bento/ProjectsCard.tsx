@@ -6,6 +6,7 @@ import Image from "next/image";
 import SectionTitle from "../shared/SectionTitle";
 import { GithubIcon, ExternalLinkIcon, FolderIcon, LucideIcon } from "lucide-react";
 import DrawerPanel from "../DrawerPanel";
+import { Lens } from "@/components/magicui/lens";
 
 type Project = {
   id: string;
@@ -77,14 +78,23 @@ export default function ProjectsCard() {
               }}
             >
               {project.image && (
-                <div className="h-40 rounded-xl overflow-hidden mb-4">
-                  <Image 
-                    src={project.image} 
-                    alt={project.title} 
-                    width={400} 
-                    height={300}
-                    className="w-full h-full object-cover" 
-                  />
+                <div className="h-40 rounded-xl overflow-hidden mb-4 relative z-0">
+                  <Lens
+                    zoomFactor={1.5}
+                    lensSize={100}
+                    isStatic={false}
+                    ariaLabel="Zoom Image"
+                    lensColor="#121212"
+                  >
+                    <Image 
+                      src={project.image} 
+                      alt={project.title} 
+                      width={400} 
+                      height={300}
+                      className="w-full h-full object-cover"
+                      priority 
+                    />
+                  </Lens>
                 </div>
               )}
               
@@ -118,14 +128,23 @@ export default function ProjectsCard() {
         {selectedProject && (
           <div className="space-y-6">
             {selectedProject.image && (
-              <div className="rounded-xl overflow-hidden">
-                <Image 
-                  src={selectedProject.image} 
-                  alt={selectedProject.title} 
-                  width={600} 
-                  height={400}
-                  className="w-full h-64 object-cover" 
-                />
+              <div className="rounded-xl overflow-hidden relative z-0">
+                <Lens
+                  zoomFactor={1.5}
+                  lensSize={120}
+                  isStatic={false}
+                  ariaLabel="Zoom Image"
+                  lensColor="#121212"
+                >
+                  <Image 
+                    src={selectedProject.image} 
+                    alt={selectedProject.title} 
+                    width={600} 
+                    height={400}
+                    className="w-full h-64 object-cover"
+                    priority
+                  />
+                </Lens>
               </div>
             )}
             

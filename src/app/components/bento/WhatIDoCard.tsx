@@ -1,74 +1,66 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Palette, Cpu, Code, MessageCircle, Wrench } from "lucide-react";
+import SkillCategory from "./SkillCategory";
 
 export default function WhatIDoCard() {
   const skillCategories = [
     {
-      icon: <Palette size={16} />,
-      title: "Design Tools",
-      skills: ["Figma", "Canva", "Illustrator", "Photoshop"],
+      title: "Design",
+      skills: ["Figma", "Canva", "Adobe XD", "UI/UX"]
     },
     {
-      icon: <Cpu size={16} />,
-      title: "AI / No-Code",
-      skills: ["Cursor", "Framer", "Uizard", "Galileo", "FlutterFlow"],
+      title: "Frontend Core",
+      skills: ["HTML5", "CSS3", "JavaScript", "TypeScript"]
     },
     {
-      icon: <Code size={16} />,
-      title: "Frontend",
-      skills: ["HTML", "CSS", "Tailwind", "React (Learning)"],
+      title: "React Ecosystem",
+      skills: ["React.js", "Next.js", "Redux", "Hooks"]
     },
     {
-      icon: <MessageCircle size={16} />,
+      title: "Styling",
+      skills: ["Tailwind", "SCSS", "Styled", "Framer"]
+    },
+    {
+      title: "Backend & DB",
+      skills: ["Node.js", "Express", "MongoDB", "SQL"]
+    },
+    {
+      title: "Dev Tools",
+      skills: ["Git", "VS Code", "Vercel", "Docker"]
+    },
+    {
+      title: "AI Tools",
+      skills: ["ChatGPT", "Cursor", "Copilot", "Claude"]
+    },
+    {
       title: "Soft Skills",
-      skills: ["Communication", "Fast Learning", "Collaboration"],
-    },
-    {
-      icon: <Wrench size={16} />,
-      title: "Other Tools",
-      skills: ["Supabase", "SQLite", "GitHub", "Notion"],
-    },
+      skills: ["Leadership", "TeamWork", "Agile", "Communication"]
+    }
   ];
 
   return (
     <motion.div
-      className="bento-card h-full p-6"
+      className="bg-[#0a0912]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.5 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
     >
-      <div className="flex flex-col h-full">
-        <h3 className="card-title">
-          <span className="text-white">WHAT I </span>
-          <span className="gradient-text">DO</span>
-        </h3>
-        
-        <div className="space-y-5">
-          {skillCategories.map((category, index) => (
-            <motion.div 
-              key={category.title}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + (index * 0.1) }}
-              className="pb-2"
-            >
-              <div className="flex items-center mb-2">
-                <span className="gradient-text mr-2">{category.icon}</span>
-                <h4 className="text-white text-sm font-medium">{category.title}</h4>
-              </div>
-              
-              <div className="flex flex-wrap">
-                {category.skills.map((skill) => (
-                  <span key={skill} className="skill-tag">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+      <h3 className="text-base font-medium mb-3 flex items-center">
+        <span className="text-white">What </span>
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#b38aff] via-[#cfa0ff] to-[#ffffff] ml-1">
+          I Do
+        </span>
+      </h3>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {skillCategories.map((category, index) => (
+          <SkillCategory
+            key={index}
+            title={category.title}
+            skills={category.skills}
+          />
+        ))}
       </div>
     </motion.div>
   );

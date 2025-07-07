@@ -21,6 +21,14 @@
   --font-sans: var(--font-inter);
   --font-heading: var(--font-poppins);
   --font-display: var(--font-allura);
+  @keyframes ripple {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    }
+  50% {
+    transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,7 +47,56 @@
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    cursor: none;
+    /* Add content-visibility for better rendering performance */
+    content-visibility: auto;
   }
+
+  /* Hide scrollbars from marquees */
+  .overflow-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  .overflow-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Scroll progress bar */
+  .scroll-progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 9999;
+    background: transparent;
+    /* Add will-change to optimize animations */
+    will-change: transform;
+  }
+
+  .scroll-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7633f9, #c872ff, #b363ff);
+    width: 0%;
+    transition: width 0.1s ease;
+    /* Add hardware acceleration */
+    transform: translateZ(0);
+    will-change: width;
+  }
+  .theme {
+    --animate-ripple: ripple var(--duration,2s) ease calc(var(--i, 0)*.2s) infinite;
+  }
+}
+
+/* Hide scrollbar for horizontal scrolling sections */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 
 @layer components {
@@ -52,8 +109,20 @@
     box-shadow: 0 8px 20px rgba(165, 108, 255, 0.1);
   }
 
+  .skill-bento-card {
+    @apply bg-[#1a1a1a] border border-[#2a2a2a]/30 shadow-md transition-all duration-300;
+    min-height: 100px;
+  }
+
+  .skill-bento-card:hover {
+    @apply shadow-lg;
+    border-color: rgba(165, 108, 255, 0.3);
+  }
+
   .gradient-text {
-    @apply bg-gradient-to-r from-[#7F5AF0] to-[#2CB67D] inline-block text-transparent bg-clip-text;
+    @apply inline-block text-transparent bg-clip-text animate-shining;
+    background-image: linear-gradient(90deg, #7633f9, #c872ff, #b363ff, #7633f9);
+    background-size: 300% 100%;
   }
 
   .tag {
@@ -74,6 +143,64 @@
 
   .glassy-effect {
     @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  /* Typography Enhancement Classes */
+  .h1 {
+    @apply text-4xl md:text-5xl font-bold font-poppins tracking-tight leading-tight;
+  }
+  
+  .h2 {
+    @apply text-3xl md:text-4xl font-semibold font-poppins tracking-tight;
+  }
+  
+  .h3 {
+    @apply text-2xl md:text-3xl font-semibold font-poppins;
+  }
+  
+  .h4 {
+    @apply text-xl md:text-2xl font-medium font-poppins;
+  }
+  
+  /* Text */
+  .body-lg {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .body {
+    @apply text-base leading-relaxed;
+  }
+  
+  .body-sm {
+    @apply text-sm leading-relaxed;
+  }
+  
+  .caption {
+    @apply text-xs text-gray-400;
+  }
+
+  /* Card spacing consistency */
+  .card-padding {
+    @apply p-4 md:p-6;
+  }
+  
+  .card-spacing {
+    @apply flex flex-col gap-4 md:gap-6;
+  }
+  
+  /* Consistent section spacing */
+  .section-spacing {
+    @apply py-8 md:py-16;
+  }
+  
+  /* Consistent gradients */
+  .glow-primary {
+    @apply shadow-[0_0_30px_rgba(165,108,255,0.3)];
+  }
+  
+  /* Animation utilities */
+  .animate-hover-grow {
+    @apply transition-transform hover:scale-105;
   }
 }
 
@@ -107,6 +234,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes gradient {
   0% {
     background-position: 0% center;
@@ -126,13 +262,111 @@
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px);
+  0%, 100% {
+    transform: translateY(0);
   }
   50% {
     transform: translateY(-10px);
   }
+}
+
+.mask-border {
+  mask-image: linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+/* QuoteCard Ripple Effect */
+.loader {
+  --duration: 2.5s;
+  --logo-color: grey;
+  --background: linear-gradient(
+    0deg,
+    rgba(165, 108, 255, 0.2) 0%,
+    rgba(199, 120, 255, 0.2) 100%
+  );
+  position: relative;
+  pointer-events: none;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader .box {
+  position: absolute;
+  background: var(--background);
+  border-radius: 50%;
+  box-shadow:
+    rgba(165, 108, 255, 0.3) 0px 10px 20px 0,
+    inset rgba(205, 155, 255, 0.5) 0px 5px 10px -7px;
+  animation: ripple var(--duration) infinite ease-in-out;
+  inset: var(--inset);
+  animation-delay: calc(var(--i) * 0.15s);
+  z-index: calc(var(--i) * -1);
+  pointer-events: all;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.loader .box:last-child {
+  filter: blur(30px);
+}
+.loader .box:not(:last-child):hover {
+  filter: brightness(2.5) blur(5px);
+}
+
+.loader .logo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  padding: 30%;
+  z-index: 20;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow:
+      rgba(165, 108, 255, 0.3) 0px 10px 20px 0,
+      inset rgba(205, 155, 255, 0.5) 0px 5px 10px -7px;
+  }
+  65% {
+    transform: scale(1.4);
+    opacity: 0.6;
+    box-shadow: rgba(165, 108, 255, 0.1) 0px 0 0 0;
+  }
   100% {
-    transform: translateY(0px);
+    transform: scale(1);
+    opacity: 1;
+    box-shadow:
+      rgba(165, 108, 255, 0.3) 0px 10px 20px 0,
+      inset rgba(205, 155, 255, 0.5) 0px 5px 10px -7px;
+  }
+}
+
+/* Shine animation for card borders */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shine {
+  animation: shine 3s infinite linear;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

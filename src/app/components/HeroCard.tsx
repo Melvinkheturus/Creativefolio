@@ -31,7 +31,7 @@ export default function HeroCard() {
         
         <div className="relative z-10">
           <motion.div
-            className="w-[140px] h-[140px] md:w-[180px] md:h-[180px] rounded-full border-4 border-white/30 overflow-hidden"
+            className="w-[140px] h-[140px] md:w-[180px] md:h-[180px] rounded-xl border-4 border-white/30 overflow-hidden"
             animate={{ 
               boxShadow: ["0 0 20px rgba(255,255,255,0.3)", "0 0 30px rgba(255,255,255,0.5)", "0 0 20px rgba(255,255,255,0.3)"]
             }}
@@ -49,8 +49,28 @@ export default function HeroCard() {
       </div>
       
       {/* Decorative elements */}
-      <div className="absolute top-[20%] right-[5%] w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-      <div className="absolute bottom-[10%] left-[5%] w-24 h-24 bg-white/10 rounded-full blur-xl" />
+      <div className="absolute top-0 right-0 w-full h-full">
+        <svg width="100%" height="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+              <stop offset="0%" stopColor="rgba(255, 255, 255, 0.3)" />
+              <stop offset="100%" stopColor="rgba(255, 255, 255, 0)" />
+            </radialGradient>
+          </defs>
+          <circle cx="350" cy="150" r="200" fill="url(#gradient)" />
+        </svg>
+      </div>
+      <div className="absolute bottom-0 left-0 w-full h-full">
+        <svg width="100%" height="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="gradient2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+              <stop offset="0%" stopColor="rgba(255, 255, 255, 0.2)" />
+              <stop offset="100%" stopColor="rgba(255, 255, 255, 0)" />
+            </radialGradient>
+          </defs>
+          <circle cx="50" cy="350" r="200" fill="url(#gradient2)" />
+        </svg>
+      </div>
     </motion.div>
   );
 } 

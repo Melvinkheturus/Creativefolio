@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { GithubIcon, LinkedinIcon, ExternalLinkIcon, MailIcon, MessageCircleIcon } from "lucide-react";
+import { ReactNode } from "react";
 
 export default function ConnectCard() {
   return (
@@ -52,7 +53,13 @@ export default function ConnectCard() {
   );
 }
 
-function SocialLink({ icon, text, href }) {
+interface SocialLinkProps {
+  icon: ReactNode;
+  text: string;
+  href: string;
+}
+
+function SocialLink({ icon, text, href }: SocialLinkProps) {
   return (
     <motion.a
       href={href}
