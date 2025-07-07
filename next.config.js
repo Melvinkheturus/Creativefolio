@@ -11,7 +11,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false, // Disable optimizeCss to avoid critters issues
     turbo: {
       rules: {
         '*.svg': ['@svgr/webpack'],
@@ -19,7 +19,7 @@ const nextConfig = {
     },
   },
   // Enable static exports for better performance
-  output: 'standalone',
+  output: 'export',
 }
 
 module.exports = nextConfig; 
