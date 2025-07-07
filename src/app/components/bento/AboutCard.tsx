@@ -2,8 +2,12 @@
 
 import { motion } from "framer-motion";
 
+interface HighlightTextProps {
+  text: string;
+}
+
 export default function AboutCard() {
-  const highlightText = (text: string): JSX.Element[] => {
+  const highlightText = ({ text }: HighlightTextProps): JSX.Element[] => {
     const result: JSX.Element[] = [];
     let lastIndex = 0;
     
@@ -64,7 +68,7 @@ export default function AboutCard() {
         </h3>
         
         <p className="text-gray-300 leading-relaxed">
-          {highlightText(aboutText)}
+          {highlightText({ text: aboutText })}
         </p>
       </div>
     </motion.div>
