@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['assets.vercel.com'], // Add any image domains you're using
+    domains: ['assets.vercel.com'],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
@@ -13,8 +13,8 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     turbo: {
-      loaders: {
-        '.svg': ['@svgr/webpack'],
+      rules: {
+        '*.svg': ['@svgr/webpack'],
       },
     },
   },
