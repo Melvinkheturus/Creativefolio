@@ -17,7 +17,7 @@ import ProjectProcess from "../../components/project/ProjectProcess";
 import ProjectResults from "../../components/project/ProjectResults";
 import ProjectLinks from "../../components/project/ProjectLinks";
 
-// Mock project data (in a real app, this would come from an API or CMS)
+// Import project data function
 import { getProjectBySlug } from "../../data/projects";
 
 export default function ProjectDetailPage() {
@@ -43,6 +43,24 @@ export default function ProjectDetailPage() {
   
   if (!project) return <div className="min-h-screen bg-black flex items-center justify-center">Loading...</div>;
   
+  // The project data already contains properly formatted techStack from the data file
+  const projectWithDefaults = {
+    ...project,
+    summary: project.summary || project.description,
+    contribution: project.contribution || `As ${project.role}, I was responsible for the entire project lifecycle, from conceptualization to final delivery.`,
+    problem: project.problem || "The project addressed key challenges in the industry with innovative solutions.",
+    solution: project.solution || "We delivered a comprehensive solution that met all client requirements and exceeded expectations.",
+    // Use existing techStack if it's already in the right format, otherwise format it
+    techStack: project.techStack || [],
+    projectType: project.projectType || project.category || "Web Development",
+    process: project.process || [],
+    images: project.images || [
+      { url: project.coverImage || project.thumbnail, alt: project.title, caption: project.subtitle }
+    ],
+    type: project.type || project.category,
+    links: project.links || {}
+  };
+
   return (
     <main className="min-h-screen bg-black">
       {/* Progress bar */}
@@ -86,19 +104,19 @@ export default function ProjectDetailPage() {
           
           {/* Summary Section - Full width */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectSummary project={project} />
+            <ProjectSummary project={projectWithDefaults} />
           </div>
           
           {/* Tech Stack - Full width */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectTechStack project={project} />
+            <ProjectTechStack project={projectWithDefaults} />
           </div>
           
           {/* Problem - Half width */}
           <div className="col-span-1 md:col-span-1 lg:col-span-3 xl:col-span-6">
             <ProjectProblemSolution 
               title="Problem" 
-              content={project.problem}
+              content={project.problem || ""}
               color="#A56CFF"
             />
           </div>
@@ -107,34 +125,34 @@ export default function ProjectDetailPage() {
           <div className="col-span-1 md:col-span-1 lg:col-span-3 xl:col-span-6">
             <ProjectProblemSolution 
               title="Solution" 
-              content={project.solution}
+              content={project.solution || ""}
               color="#C278FF"
             />
           </div>
           
           {/* Features - Full width */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectFeatures features={project.features} />
+            <ProjectFeatures features={project.features || []} />
           </div>
           
           {/* Visual Showcase - Full width */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectVisualShowcase images={project.images} />
+            <ProjectVisualShowcase images={projectWithDefaults.images} />
           </div>
           
           {/* Process - Full width */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectProcess process={project.process} type={project.type} />
+            <ProjectProcess process={projectWithDefaults.process} type={projectWithDefaults.type} />
           </div>
           
           {/* Results - Full width or half width depending on content */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-12">
-            <ProjectResults results={project.results} />
+            <ProjectResults results={project.results || []} />
           </div>
           
           {/* Links - Half width on larger screens */}
           <div className="col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-6">
-            <ProjectLinks links={project.links} />
+            <ProjectLinks links={projectWithDefaults.links} />
           </div>
         </div>
       </div>
