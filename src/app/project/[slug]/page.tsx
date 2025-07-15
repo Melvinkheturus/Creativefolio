@@ -20,6 +20,29 @@ import ProjectLinks from "../../components/project/ProjectLinks";
 // Import project data function
 import { getProjectBySlug } from "../../data/projects";
 
+// Helper function to normalize tech stack items to ensure they're all in the correct format
+const normalizeTechStack = (techStack: any[]) => {
+  if (!techStack || !Array.isArray(techStack)) return [];
+  
+  return techStack.map(tech => {
+    // If it's already in the correct format, return as is
+    if (tech && typeof tech === 'object' && tech.name) {
+      return tech;
+    }
+    
+    // If it's a string, convert it to the required object format
+    if (typeof tech === 'string') {
+      return {
+        name: tech,
+        icon: tech.toLowerCase()
+      };
+    }
+    
+    // Fallback for any unexpected format
+    return { name: String(tech), icon: '' };
+  });
+};
+
 export default function ProjectDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -50,8 +73,8 @@ export default function ProjectDetailPage() {
     contribution: project.contribution || `As ${project.role}, I was responsible for the entire project lifecycle, from conceptualization to final delivery.`,
     problem: project.problem || "The project addressed key challenges in the industry with innovative solutions.",
     solution: project.solution || "We delivered a comprehensive solution that met all client requirements and exceeded expectations.",
-    // Use existing techStack if it's already in the right format, otherwise format it
-    techStack: project.techStack || [],
+    // Normalize the tech stack to ensure it's in the correct format
+    techStack: normalizeTechStack(project.techStack || []),
     projectType: project.projectType || project.category || "Web Development",
     process: project.process || [],
     images: project.images || [

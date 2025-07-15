@@ -10,9 +10,9 @@ interface TechStack {
 }
 
 interface Project {
-  techStack?: TechStack[];
+  techStack?: TechStack[] | string[];
   tools?: string[];
-  projectType: string;
+  projectType?: string;
 }
 
 type ProjectTechStackProps = {
@@ -23,6 +23,13 @@ type TechBadgeProps = {
   name: string;
   icon?: string;
   delay: number;
+};
+
+// Safe function to handle tech stack rendering
+const getTechName = (tech: any): string => {
+  if (typeof tech === 'string') return tech;
+  if (tech && typeof tech === 'object' && tech.name) return tech.name;
+  return String(tech);
 };
 
 function TechBadge({ name, icon, delay }: TechBadgeProps) {
@@ -45,6 +52,8 @@ function TechBadge({ name, icon, delay }: TechBadgeProps) {
 }
 
 export default function ProjectTechStack({ project }: ProjectTechStackProps) {
+  if (!project) return null;
+  
   return (
     <motion.div
       className="bento-card p-6"
@@ -61,14 +70,20 @@ export default function ProjectTechStack({ project }: ProjectTechStackProps) {
           </div>
           
           <div className="flex flex-wrap gap-2">
-            {project.techStack?.map((tech, index) => (
-              <TechBadge 
-                key={index} 
-                name={tech.name} 
-                icon={tech.icon} 
-                delay={0.4 + (index * 0.05)}
-              />
-            ))}
+            {project.techStack && Array.isArray(project.techStack) && project.techStack.map((tech, index) => {
+              // Handle both object and string formats
+              const techName = getTechName(tech);
+              const techIcon = typeof tech === 'object' && tech.icon ? tech.icon : '';
+              
+              return (
+                <TechBadge 
+                  key={index} 
+                  name={techName} 
+                  icon={techIcon} 
+                  delay={0.4 + (index * 0.05)}
+                />
+              );
+            })}
           </div>
         </div>
         
@@ -80,7 +95,7 @@ export default function ProjectTechStack({ project }: ProjectTechStackProps) {
           </div>
           
           <div className="flex flex-wrap gap-2">
-            {project.tools?.map((tool, index) => (
+            {project.tools && Array.isArray(project.tools) && project.tools.map((tool, index) => (
               <motion.span
                 key={index}
                 className="badge"
@@ -107,7 +122,7 @@ export default function ProjectTechStack({ project }: ProjectTechStackProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <p className="text-gray-300 text-sm">{project.projectType}</p>
+            <p className="text-gray-300 text-sm">{project.projectType || "Project"}</p>
           </motion.div>
         </div>
       </div>
