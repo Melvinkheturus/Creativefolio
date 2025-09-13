@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@realfavicongenerator/generate-favicon": "^0.4.16",
+    "@realfavicongenerator/image-adapter-node": "^0.4.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",

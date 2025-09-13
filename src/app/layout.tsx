@@ -65,7 +65,13 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#040406" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="apple-mobile-web-app-title" content="Smkfolio" />
+        <link rel="icon" href="/Favicon/favicon.ico" />
+        <link rel="apple-touch-icon" href="/Favicon/apple-icon.png" />
+        <link rel="icon" type="image/svg+xml" href="/Favicon/icon0.svg" />
+        <link rel="manifest" href="/Favicon/manifest.json" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/Favicon/web-app-manifest-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/Favicon/web-app-manifest-512x512.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
