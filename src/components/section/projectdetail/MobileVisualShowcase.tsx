@@ -5,15 +5,21 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { X, Maximize2 } from "lucide-react";
 
-type MobileVisualShowcaseProps = {
-  images: any[];
-  features: any[];
-};
-
 type ImageType = {
   url: string;
   alt: string;
   caption: string;
+};
+
+type FeatureType = {
+  title: string;
+  description: string;
+  icon?: string;
+};
+
+type MobileVisualShowcaseProps = {
+  images: ImageType[];
+  features: FeatureType[];
 };
 
 type LightboxProps = {
@@ -121,7 +127,7 @@ export default function MobileVisualShowcase({ images, features }: MobileVisualS
   );
 }
 
-function FeatureItem({ title, icon, description, index }: { title: string; icon: string; description: string; index: number }) {
+function FeatureItem({ title, description, index }: { title: string; icon?: string; description: string; index: number }) {
   // Determine if feature should be large based on index
   const isLarge = index % 5 === 0;
   const sizeClasses = isLarge ? 'col-span-2 row-span-2' : 'col-span-1 row-span-1';

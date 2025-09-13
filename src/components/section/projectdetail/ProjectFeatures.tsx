@@ -122,4 +122,4 @@ function FeatureCard({ title, description, icon, delay, size = 'small' }: Featur
       <p className="text-gray-400 text-sm">{description}</p>
     </motion.div>
   );
-} 
+}

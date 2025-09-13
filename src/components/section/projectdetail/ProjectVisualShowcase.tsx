@@ -7,7 +7,7 @@ import { X, Maximize2 } from "lucide-react";
 // Removed Lens import
 
 type ProjectVisualShowcaseProps = {
-  images: any[];
+  images: ImageType[];
 };
 
 type ImageType = {

@@ -52,7 +52,7 @@ export default function ProjectResults({ results }: ProjectResultsProps) {
   );
 }
 
-function ResultMetric({ metric, value, description, delay, index }: ResultMetricProps) {
+function ResultMetric({ metric, value, description, delay }: ResultMetricProps) {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
@@ -60,14 +60,14 @@ function ResultMetric({ metric, value, description, delay, index }: ResultMetric
   
   const [displayValue, setDisplayValue] = useState("0");
   
-  // Extract numeric part from value (e.g., "85%" -> 85)
-  const getNumericValue = () => {
-    const matches = value.match(/\d+(\.\d+)?/);
-    return matches ? parseFloat(matches[0]) : 0;
-  };
-  
   useEffect(() => {
     if (inView) {
+      // Extract numeric part from value (e.g., "85%" -> 85)
+      const getNumericValue = () => {
+        const matches = value.match(/\d+(\.\d+)?/);
+        return matches ? parseFloat(matches[0]) : 0;
+      };
+      
       const numericValue = getNumericValue();
       let startValue = 0;
       const increment = numericValue / 30; // Animate in 30 steps
@@ -82,7 +82,7 @@ function ResultMetric({ metric, value, description, delay, index }: ResultMetric
         if (value.includes('%')) {
           setDisplayValue(`${Math.round(startValue)}%`);
         } else if (value.includes('/')) {
-          const [num, denom] = value.split('/');
+          const [, denom] = value.split('/');
           setDisplayValue(`${Math.round(startValue)}/${denom}`);
         } else {
           setDisplayValue(`${Math.round(startValue)}`);
@@ -121,4 +121,4 @@ function ResultMetric({ metric, value, description, delay, index }: ResultMetric
       </div>
     </motion.div>
   );
-} 
+}

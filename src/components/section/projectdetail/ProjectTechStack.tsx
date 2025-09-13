@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Code, Wrench, Layers } from "lucide-react";
-import Image from "next/image";
 
 interface TechStack {
   name: string;
@@ -26,13 +25,13 @@ type TechBadgeProps = {
 };
 
 // Safe function to handle tech stack rendering
-const getTechName = (tech: any): string => {
+const getTechName = (tech: TechStack | string): string => {
   if (typeof tech === 'string') return tech;
   if (tech && typeof tech === 'object' && tech.name) return tech.name;
   return String(tech);
 };
 
-function TechBadge({ name, icon, delay }: TechBadgeProps) {
+function TechBadge({ name, delay }: TechBadgeProps) {
   return (
     <motion.div
       className="relative group"
@@ -128,4 +127,4 @@ export default function ProjectTechStack({ project }: ProjectTechStackProps) {
       </div>
     </motion.div>
   );
-} 
+}

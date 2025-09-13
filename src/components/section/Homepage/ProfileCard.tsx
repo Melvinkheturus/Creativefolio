@@ -103,7 +103,7 @@ export default function Profile() {
 
       <div className="mt-0.5">
         <div className="flex items-center justify-center gap-1">
-          <span className="text-sm font-medium text-white tracking-wide">I'm a</span>
+          <span className="text-sm font-medium text-white tracking-wide">I&apos;m a</span>
           <WordRotate 
             words={designationWords}
             className="text-sm font-medium bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent tracking-wide"
@@ -120,7 +120,7 @@ export default function Profile() {
 
       <div className="mt-1 cursor-default">
         <p className="text-gray-300 text-xs italic leading-relaxed">
-          "{quote}"
+          &quot;{quote}&quot;
         </p>
       </div>
     </div>

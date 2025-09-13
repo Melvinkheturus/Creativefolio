@@ -3,8 +3,13 @@
 import { motion } from "framer-motion";
 
 type ProjectSummaryProps = {
-  project: any;
+  project: Project;
 };
+
+interface Project {
+  summary?: string;
+  contribution?: string;
+}
 
 export default function ProjectSummary({ project }: ProjectSummaryProps) {
   return (
@@ -49,4 +54,4 @@ export default function ProjectSummary({ project }: ProjectSummaryProps) {
       </div>
     </motion.div>
   );
-} 
+}
