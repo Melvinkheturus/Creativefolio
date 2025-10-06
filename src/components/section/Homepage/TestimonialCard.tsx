@@ -3,46 +3,61 @@
 import { BentoCard } from "../../bento/BentoCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
 
 interface Testimonial {
+  _id: string;
+  _type: string;
   quote: string;
   name: string;
   title: string;
   avatar: string;
 }
 
-const testimonials: Testimonial[] = [
+const DEFAULT_TESTIMONIALS: Testimonial[] = [
   {
+    _id: 'testimonial-1',
+    _type: 'testimonial',
     quote: "Muralidharan is an exceptional developer who delivered our project on time and exceeded our expectations. His attention to detail and problem-solving skills are impressive.",
     name: "Jane Doe",
     title: "CEO, Tech Startup",
     avatar: "JD",
   },
   {
+    _id: 'testimonial-2',
+    _type: 'testimonial',
     quote: "Working with Muralidharan was a pleasure. He's highly skilled, communicative, and always goes the extra mile to ensure the quality of his work.",
     name: "John Smith",
     title: "CTO, Software Company",
     avatar: "JS",
   },
   {
+    _id: 'testimonial-3',
+    _type: 'testimonial',
     quote: "Muralidharan transformed our vision into a reality. His expertise in modern web technologies is evident in the robust and scalable solution he built for us.",
     name: "Emily White",
     title: "Product Manager, E-commerce",
     avatar: "EW",
   },
   {
+    _id: 'testimonial-4',
+    _type: 'testimonial',
     quote: "Muralidharan is a highly skilled and dedicated developer. He consistently delivers high-quality work and is a valuable asset to any team.",
     name: "David Lee",
     title: "Senior Developer, FinTech",
     avatar: "DL",
   },
   {
+    _id: 'testimonial-5',
+    _type: 'testimonial',
     quote: "I was impressed by Muralidharan's ability to quickly grasp complex requirements and translate them into elegant code. A true professional!",
     name: "Sarah Chen",
     title: "Project Lead, Healthcare",
     avatar: "SC",
   },
   {
+    _id: 'testimonial-6',
+    _type: 'testimonial',
     quote: "Muralidharan's contributions were instrumental in the success of our latest product launch. His technical prowess and collaborative spirit are unmatched.",
     name: "Michael Brown",
     title: "VP of Engineering, Startup",
@@ -50,15 +65,35 @@ const testimonials: Testimonial[] = [
   },
 ];
 
+type TestimonialData = Testimonial[];
+
 export default function TestimonialCard() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [testimonialData, setTestimonialData] = useState<TestimonialData>(DEFAULT_TESTIMONIALS);
+
+  useEffect(() => {
+    async function fetchTestimonialData() {
+      const query = `*[_type == "testimonial"] | order(_createdAt asc) {
+        _id,
+        _type,
+        quote,
+        name,
+        title,
+        avatar
+      }`;
+      const result = await sanityFetch<TestimonialData>(query, DEFAULT_TESTIMONIALS);
+      setTestimonialData(result.data);
+    }
+    fetchTestimonialData();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+      setActiveIndex((prevIndex) => (prevIndex + 1) % testimonialData.length);
     }, 5000); // Change testimonial every 5 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonialData]);
+
   return (
     <BentoCard className="md:col-span-2 md:row-span-1">
       <motion.div
@@ -83,20 +118,20 @@ export default function TestimonialCard() {
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
               </svg>
               <p className="text-gray-300 italic">
-                &quot;{testimonials[activeIndex].quote}&quot;
+                &quot;{testimonialData[activeIndex].quote}&quot;
               </p>
               <div className="mt-4 flex items-center">
-                <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold">{testimonials[activeIndex].avatar}</div>
+                <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-bold">{testimonialData[activeIndex].avatar}</div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-white">{testimonials[activeIndex].name}</p>
-                  <p className="text-xs text-gray-400">{testimonials[activeIndex].title}</p>
+                  <p className="text-sm font-medium text-white">{testimonialData[activeIndex].name}</p>
+                  <p className="text-xs text-gray-400">{testimonialData[activeIndex].title}</p>
                 </div>
               </div>
             </motion.div>
           </AnimatePresence>
         </div>
         <div className="flex justify-center mt-4 gap-2">
-          {testimonials.map((_, index) => (
+          {testimonialData.map((_, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}

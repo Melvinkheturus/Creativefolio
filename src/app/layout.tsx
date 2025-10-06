@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import PersonSchema from "@/components/PersonSchema";
 import Cursor from "@/components/ui/Cursor";
+import ClientLayoutWrapper from "./ClientLayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,13 +74,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="192x192" href="/Favicon/web-app-manifest-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/Favicon/web-app-manifest-512x512.png" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <PersonSchema />
-        <Cursor />
-        {children}
-      </body>
+      <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
     </html>
   );
 }

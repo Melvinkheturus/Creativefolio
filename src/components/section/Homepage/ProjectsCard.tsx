@@ -7,30 +7,84 @@ import Image from "next/image";
 import { Eye } from "lucide-react";
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { projects as projectsData } from "@/data/projects";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
 
-interface Project {
-  id: number;
-  title: string;
-  image: string;
-  category: string;
-  slug: string;
-}
+const DEFAULT_PROJECTS = [
+  {
+    _id: 'unisync-thumbnail',
+    _type: 'project',
+    title: 'Unisync Thumbnail',
+    thumbnail: '/thumbnail/Unisync thumbnail.mp4',
+    category: 'Video',
+    slug: 'unisync-thumbnail',
+  },
+  {
+    _id: 'examinerpro-cs',
+    _type: 'project',
+    title: 'ExaminerPro CS',
+    thumbnail: '/thumbnail/examinerpro-cs.jpg',
+    category: 'Web Development',
+    slug: 'examinerpro-cs',
+  },
+  {
+    _id: 'examinerpro-dev',
+    _type: 'project',
+    title: 'ExaminerPro Dev',
+    thumbnail: '/thumbnail/examinerpro-dev.jpg',
+    category: 'Web Development',
+    slug: 'examinerpro-dev',
+  },
+  {
+    _id: 'pixeldraft',
+    _type: 'project',
+    title: 'Pixeldraft',
+    thumbnail: '/thumbnail/pixeldraft.jpg',
+    category: 'Design',
+    slug: 'pixeldraft',
+  },
+  {
+    _id: 'rr-miracle-events',
+    _type: 'project',
+    title: 'RR Miracle Events',
+    thumbnail: '/thumbnail/rr-miracle-events.jpg',
+    category: 'Web Development',
+    slug: 'rr-miracle-events',
+  },
+];
+
+type ProjectItem = typeof DEFAULT_PROJECTS[0];
+type ProjectsData = ProjectItem[];
 
 interface ProjectCardProps {
-  project: Project;
+  project: ProjectItem;
   delay: number;
   index: number;
   total: number;
 }
 
 export default function Work() {
+  const [projectsData, setProjectsData] = useState<ProjectsData>(DEFAULT_PROJECTS);
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    async function fetchProjectsData() {
+      const query = `*[_type == "project"] | order(orderRank){
+        _id,
+        _type,
+        title,
+        "thumbnail": thumbnail.asset->url,
+        category,
+        "slug": slug.current
+      }`;
+      const result = await sanityFetch<ProjectsData>(query, DEFAULT_PROJECTS);
+      setProjectsData(result.data);
+    }
+    fetchProjectsData();
+  }, []);
   
-  // Convert projectsData to the format needed for display, using useMemo to avoid recalculation
   const projects = useMemo(() => {
     return projectsData.map((project, index) => ({
       id: index + 1,
@@ -39,7 +93,7 @@ export default function Work() {
       category: project.category,
       slug: project.slug
     }));
-  }, []);
+  }, [projectsData]);
 
   const scrollPrev = useCallback(() => {
     if (activeIndex > 0) {
@@ -139,10 +193,10 @@ export default function Work() {
                 handleUserInteraction();
                 scrollNext();
               }}
-              className={`p-1.5 rounded-full ${activeIndex < projects.length - 1 ? 'bg-white/10 hover:bg-white/20' : 'bg-white/5 cursor-not-allowed'} transition text-white shimmer-wrapper`}
-              whileHover={activeIndex < projects.length - 1 ? { scale: 1.1 } : {}}
-              whileTap={activeIndex < projects.length - 1 ? { scale: 0.95 } : {}}
-              disabled={activeIndex >= projects.length - 1}
+              className={`p-1.5 rounded-full ${activeIndex < projectsData.length - 1 ? 'bg-white/10 hover:bg-white/20' : 'bg-white/5 cursor-not-allowed'} transition text-white shimmer-wrapper`}
+              whileHover={activeIndex < projectsData.length - 1 ? { scale: 1.1 } : {}}
+              whileTap={activeIndex < projectsData.length - 1 ? { scale: 0.95 } : {}}
+              disabled={activeIndex >= projectsData.length - 1}
               aria-label="Next project"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
@@ -157,16 +211,16 @@ export default function Work() {
           onMouseEnter={handleUserInteraction}
           onTouchStart={handleUserInteraction}
         >
-          {projects.map((project, index) => (
+          {projectsData.map((project, index) => (
             <div 
-              key={project.id}
+              key={project._id}
               className="flex-none w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] snap-center"
             >
               <ProjectCard 
                 project={project} 
                 delay={0.3 + (index * 0.1)}
                 index={index}
-                total={projects.length}
+                total={projectsData.length}
               />
             </div>
           ))}
@@ -174,7 +228,7 @@ export default function Work() {
         
         {/* Dotted indicator for auto-scroll */}
         <div className="flex justify-center mt-4 mb-2 gap-2">
-          {projects.map((_, index) => (
+          {projectsData.map((_, index) => (
             <motion.div
               key={index}
               className={`h-2 w-2 rounded-full ${index === activeIndex ? 'bg-purple-500' : 'bg-gray-700'}`}
@@ -206,9 +260,9 @@ const ProjectCard = React.memo(function ProjectCard({ project, delay = 0, index,
       >
         
         {/* Thumbnail Image or Video */}
-        {project.image.endsWith('.mp4') ? (
+        {project.thumbnail.endsWith('.mp4') ? (
           <video
-            src={project.image}
+            src={project.thumbnail}
             autoPlay
             loop
             muted
@@ -218,7 +272,7 @@ const ProjectCard = React.memo(function ProjectCard({ project, delay = 0, index,
         ) : (
           <div className="w-full h-full relative z-0 overflow-hidden">
               <Image
-                src={project.image}
+                src={project.thumbnail}
                 alt={project.title}
                 width={400}
                 height={225}
@@ -233,7 +287,7 @@ const ProjectCard = React.memo(function ProjectCard({ project, delay = 0, index,
         {/* Gradient Fade (only behind text) */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10" />
         
-        <Link href={`/project/${project.slug}`} className="absolute inset-0 z-20 p-3 flex flex-col justify-between">
+        <Link href={`/projects/${project.slug}`} className="absolute inset-0 z-20 p-3 flex flex-col justify-between">
           {/* Top row with Badge */}
           <div className="flex justify-between">
             <span className="px-2 py-0.5 text-xs font-medium bg-black/50 backdrop-blur-sm rounded-full text-white">

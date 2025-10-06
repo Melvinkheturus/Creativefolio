@@ -1,8 +1,25 @@
 "use client";
-
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Ripple } from "@/components/ui/ripple";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
+// DEFAULT FALLBACK DATA
+const DEFAULT_CONTACT = {
+  _id: 'contact',
+  _type: 'contact',
+  titlePart1: 'LETS',
+  titlePart2: 'WORK ',
+  titlePart3: 'TOGETHER.',
+  formFields: [
+    { name: 'name', placeholder: 'Your Name', type: 'text', required: true },
+    { name: 'email', placeholder: 'Your Email', type: 'email', required: true },
+    { name: 'message', placeholder: 'Your Message', type: 'textarea', required: true },
+  ],
+  submitButtonText: 'Send Message',
+};
+
+type ContactData = typeof DEFAULT_CONTACT;
 
 export default function ContactCard() {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -12,6 +29,27 @@ export default function ContactCard() {
     email: '',
     message: ''
   });
+  const [contactData, setContactData] = useState<ContactData>(DEFAULT_CONTACT);
+
+  useEffect(() => {
+    async function fetchContactData() {
+      const query = `*[_type == "contact"][0]{
+        titlePart1,
+        titlePart2,
+        titlePart3,
+        formFields[]{
+          name,
+          placeholder,
+          type,
+          required
+        },
+        submitButtonText
+      }`;
+      const result = await sanityFetch<ContactData>(query, DEFAULT_CONTACT);
+      setContactData(result.data);
+    }
+    fetchContactData();
+  }, []);
   
   const handleClick = () => {
     setIsFormOpen(!isFormOpen);
@@ -55,12 +93,12 @@ export default function ContactCard() {
         
         {/* Card header with toggle button */}
         <div 
-          className={`flex justify-between items-center cursor-pointer mb-1 md:mb-2 ${isFormOpen ? '' : 'h-full'}`} 
+          className={`flex justify-between items-center cursor-pointer mb-1 md:mb-2 ${isFormOpen ? '' : 'h-full'}`}
           onClick={handleClick}
         >
           <h3 className="text-2xl font-bold tracking-wide">
-            <span className="text-white">LETS<br />WORK </span>
-            <span className="text-purple-500">TOGETHER.</span>
+            <span className="text-white">{contactData.titlePart1}<br />{contactData.titlePart2}</span>
+            <span className="text-purple-500">{contactData.titlePart3}</span>
           </h3>
           
           <motion.div
@@ -82,7 +120,7 @@ export default function ContactCard() {
         <motion.div 
           className="mt-1 overflow-visible flex-grow"
           initial={{ height: 0, opacity: 0 }}
-          animate={{ 
+          animate={{
             height: isFormOpen ? 'auto' : 0,
             opacity: isFormOpen ? 1 : 0,
             marginBottom: isFormOpen ? '0.5rem' : 0
@@ -92,47 +130,39 @@ export default function ContactCard() {
         >
           {isFormOpen && (
             <form onSubmit={handleSubmit} className="space-y-1 flex flex-col">
-              <div className="mb-1">
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Your Name"
-                    className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                    required
-                  />
+              {contactData.formFields.map((field, index) => (
+                <div className="mb-1" key={index}>
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      name={field.name}
+                      value={formData[field.name as keyof typeof formData]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      rows={2}
+                      className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 resize-none"
+                      style={{ height: '40px' }}
+                      required={field.required}
+                    ></textarea>
+                  ) : (
+                    <input
+                      type={field.type}
+                      name={field.name}
+                      value={formData[field.name as keyof typeof formData]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                      required={field.required}
+                    />
+                  )}
                 </div>
-                <div className="mb-1">
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Your Email"
-                    className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                    required
-                  />
-                </div>
-                <div className="mb-1">
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Your Message"
-                    rows={2}
-                    className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 resize-none"
-                    style={{ height: '40px' }}
-                    required
-                  ></textarea>
-                </div>
+              ))}
               <motion.button
                   type="submit"
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-1 px-4 rounded transition-colors duration-300 text-xs mt-1"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Send Message
+                  {contactData.submitButtonText}
                 </motion.button>
             </form>
           )}

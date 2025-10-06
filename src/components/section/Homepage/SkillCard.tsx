@@ -2,57 +2,96 @@
 
 import React, { JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FiChevronDown, FiLayout, FiCode, FiMonitor, FiTrendingUp, FiPenTool } from "react-icons/fi";
 import SectionHeader from "../../ui/SectionHeader";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
+const iconMap: { [key: string]: JSX.Element } = {
+  "FiLayout": <FiLayout className="w-4 h-4" />,
+  "FiCode": <FiCode className="w-4 h-4" />,
+  "FiMonitor": <FiMonitor className="w-4 h-4" />,
+  "FiTrendingUp": <FiTrendingUp className="w-4 h-4" />,
+  "FiPenTool": <FiPenTool className="w-4 h-4" />,
+};
 
 interface SkillCategory {
+  _id: string;
+  _type: string;
   id: number;
   title: string;
-  icon: JSX.Element;
+  icon: string;
   description: string;
   skills: string[];
 }
 
+const DEFAULT_SKILLS: SkillCategory[] = [
+  {
+    _id: 'skill-1',
+    _type: 'skillCategory',
+    id: 1,
+    title: "UI/UX Design",
+    icon: "FiLayout",
+    description: "Creating intuitive, beautiful interfaces with user-centered design principles.",
+    skills: ["Wireframing", "Prototyping", "User Research", "Figma", "Framer"]
+  },
+  {
+    _id: 'skill-2',
+    _type: 'skillCategory',
+    id: 2,
+    title: "Web Development",
+    icon: "FiCode",
+    description: "Building responsive, interactive web experiences with modern frameworks.",
+    skills: ["React", "Next.js", "Tailwind CSS", "HTML/CSS", "JavaScript", "Supabase", "Sanity"]
+  },
+  {
+    _id: 'skill-3',
+    _type: 'skillCategory',
+    id: 3,
+    title: "Web Design",
+    icon: "FiMonitor",
+    description: "Crafting visually appealing websites with focus on aesthetics and usability.",
+    skills: ["Responsive Design", "WordPress", "Visual Hierarchy", "Accessibility", "Cross-platform Compatibility"]
+  },
+  {
+    _id: 'skill-4',
+    _type: 'skillCategory',
+    id: 4,
+    title: "Graphic Design",
+    icon: "FiPenTool",
+    description: "Creating visual content that communicates messages effectively.",
+    skills: ["Brand Identity", "Typography", "Illustration", "Motion Graphics", "Print Design"]
+  }
+];
+
+type SkillData = SkillCategory[];
+
 export default function WhatIDo() {
   const [openCategory, setOpenCategory] = useState<number>(1); // Default open is UI/UX Design (id: 1)
   const cardRef = useRef<HTMLDivElement>(null);
+  const [skillData, setSkillData] = useState<SkillData>(DEFAULT_SKILLS);
+
+  useEffect(() => {
+    async function fetchSkillData() {
+      const query = `*[_type == "skillCategory"] | order(id asc) {
+        _id,
+        _type,
+        id,
+        title,
+        icon,
+        description,
+        skills
+      }`;
+      const result = await sanityFetch<SkillData>(query, DEFAULT_SKILLS);
+      setSkillData(result.data);
+    }
+    fetchSkillData();
+  }, []);
 
   const toggleCategory = (id: number) => {
     // Always keep one category open
     setOpenCategory(openCategory === id ? openCategory : id);
   };
-
-  const categories: SkillCategory[] = [
-    {
-      id: 1,
-      title: "UI/UX Design",
-      icon: <FiLayout className="w-4 h-4" />,
-      description: "Creating intuitive, beautiful interfaces with user-centered design principles.",
-      skills: ["Wireframing", "Prototyping", "User Research", "Figma", "Framer"]
-    },
-    {
-      id: 2,
-      title: "Web Development",
-      icon: <FiCode className="w-4 h-4" />,
-      description: "Building responsive, interactive web experiences with modern frameworks.",
-      skills: ["React", "Next.js", "Tailwind CSS", "HTML/CSS", "JavaScript", "Supabase", "Sanity"]
-    },
-    {
-      id: 3,
-      title: "Web Design",
-      icon: <FiMonitor className="w-4 h-4" />,
-      description: "Crafting visually appealing websites with focus on aesthetics and usability.",
-      skills: ["Responsive Design", "WordPress", "Visual Hierarchy", "Accessibility", "Cross-platform Compatibility"]
-    },
-    {
-      id: 4,
-      title: "Graphic Design",
-      icon: <FiPenTool className="w-4 h-4" />,
-      description: "Creating visual content that communicates messages effectively.",
-      skills: ["Brand Identity", "Typography", "Illustration", "Motion Graphics", "Print Design"]
-    }
-  ];
 
   return (
     <motion.div
@@ -73,7 +112,7 @@ export default function WhatIDo() {
         <SectionHeader title="What I Do" />
         
         <div className="space-y-1.5">
-          {categories.map((category) => (
+          {skillData.map((category) => (
             <div key={category.id} className="overflow-hidden">
               <motion.button
                 className={`w-full flex items-center justify-between py-2 px-3 rounded-lg hover:bg-white/5 transition-colors text-left ${
@@ -85,7 +124,7 @@ export default function WhatIDo() {
               >
                 <div className="flex items-center space-x-2">
                   <div className={`p-1 rounded-full ${openCategory === category.id ? "bg-purple-500/20 text-purple-400" : "bg-[#1a1a1a] text-gray-400"}`}>
-                    {category.icon}
+                    {iconMap[category.icon]}
                   </div>
                   <span className={`font-medium text-xs md:text-sm ${openCategory === category.id ? "text-white" : "text-gray-300"}`}>
                     {category.title}

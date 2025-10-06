@@ -1,0 +1,16 @@
+:root {
+  /* Background for the entire studio */
+  --body-bg: #1a1a1a !important;
+
+  /* Default button colors */
+  --default-button-color: #a78bfa !important;
+  --default-button-primary-color: #a78bfa !important;
+
+  /* Selected navigation item background and text color */
+  --main-navigation-color--selected: #a78bfa !important;
+  --main-navigation-color--selected-fg: #ffffff !important;
+  --state-info-color: #a78bfa !important;
+  --state-info-color--inverted: #a78bfa !important;
+  --component-state-info-color: #a78bfa !important;
+  --component-state-info-color--inverted: #a78bfa !important;
+}

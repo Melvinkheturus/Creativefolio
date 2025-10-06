@@ -4,8 +4,35 @@ import { motion } from "framer-motion";
 import { FiFileText, FiDownload, FiArrowRight } from "react-icons/fi";
 import Link from "next/link";
 import SectionHeader from "../../ui/SectionHeader";
+import { useState, useEffect } from "react";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
+const DEFAULT_RESUME = {
+  _id: 'resume',
+  _type: 'resume',
+  downloadLink: '/resume.pdf',
+  viewLink: '/resume',
+};
+
+type ResumeData = typeof DEFAULT_RESUME;
 
 export default function Resume() {
+  const [resumeData, setResumeData] = useState<ResumeData>(DEFAULT_RESUME);
+
+  useEffect(() => {
+    async function fetchResumeData() {
+      const query = `*[_type == "resume"][0]{
+        _id,
+        _type,
+        downloadLink,
+        viewLink
+      }`;
+      const result = await sanityFetch<ResumeData>(query, DEFAULT_RESUME);
+      setResumeData(result.data);
+    }
+    fetchResumeData();
+  }, []);
+
   return (
     <motion.div
         className="h-full p-6 rounded-2xl bg-[#040406] border-#1c0333 relative overflow-hidden"
@@ -30,7 +57,7 @@ export default function Resume() {
           {/* CTA Zone */}
           <div className="flex flex-col space-y-2 mt-auto">
             <a 
-              href="/resume.pdf" 
+              href={resumeData.downloadLink} 
               target="_blank"
               className="text-white text-sm hover:text-purple-400 transition-colors duration-300 flex items-center group"
             >
@@ -40,7 +67,7 @@ export default function Resume() {
             </a>
             
             <Link 
-              href="/resume"
+              href={resumeData.viewLink}
               className="text-white text-sm hover:text-purple-400 transition-colors duration-300 flex items-center group"
             >
               <FiFileText className="mr-2 text-purple-400 group-hover:text-white transition-colors duration-300" />

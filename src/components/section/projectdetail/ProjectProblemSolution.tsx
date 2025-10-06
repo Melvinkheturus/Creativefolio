@@ -1,45 +1,44 @@
 "use client";
 
+import { PortableText } from '@portabletext/react';
 import { motion } from "framer-motion";
+import { Lightbulb, Rocket } from "lucide-react";
+import ProjectCard from "@/components/ui/ProjectCard";
+import { CasestudyType } from "@/types/project";
+import { portableTextComponents } from '@/components/ui/PortableTextComponent';
 
 type ProjectProblemSolutionProps = {
-  title: string;
-  content: string;
-  color: string;
+  project: CasestudyType;
 };
 
-export default function ProjectProblemSolution({ 
-  title, 
-  content, 
-  color 
-}: ProjectProblemSolutionProps) {
-  const isLeftSide = title === "Problem";
-  
+export default function ProjectProblemSolution({ project }: ProjectProblemSolutionProps) {
+  if (!project) return null;
+
   return (
-    <motion.div
-      className="bento-card h-full p-6"
-      initial={{ 
-        opacity: 0, 
-        x: isLeftSide ? -20 : 20 
-      }}
-      animate={{ 
-        opacity: 1, 
-        x: 0 
-      }}
-      transition={{ 
-        duration: 0.6, 
-        delay: isLeftSide ? 0.4 : 0.5 
-      }}
+    <ProjectCard
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.6 }}
     >
-      <div className={`border-l-2 pl-4`} style={{ borderColor: color }}>
-        <h3 className="card-title">
-          <span className="text-white">{title.toUpperCase()}</span>
-        </h3>
-        
-        <p className="text-gray-300 text-sm leading-relaxed">
-          {content}
-        </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Problem Section */}
+        <div>
+          <div className="flex items-center mb-4">
+            <Lightbulb size={18} className="gradient-text mr-2" />
+            <h3 className="text-white font-medium">Problem</h3>
+          </div>
+          <PortableText value={project.problem} components={portableTextComponents} />
+        </div>
+
+        {/* Solution Section */}
+        <div>
+          <div className="flex items-center mb-4">
+            <Rocket size={18} className="gradient-text mr-2" />
+            <h3 className="text-white font-medium">Solution</h3>
+          </div>
+          <PortableText value={project.solution} components={portableTextComponents} />
+        </div>
       </div>
-    </motion.div>
+    </ProjectCard>
   );
-} 
+}

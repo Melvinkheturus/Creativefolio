@@ -1,5 +1,5 @@
 "use client";
-
+import { z } from "zod";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";

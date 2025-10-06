@@ -1,16 +1,36 @@
 "use client";
-
+import { useState, useEffect, useRef } from "react";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+
+const DEFAULT_MARQUEE = {
+  _id: 'marquee-section',
+  _type: 'marquee',
+  content: "Manikandan ✦ Web Developer ✦ Designer ✦ Creator"
+};
+
+type MarqueeData = typeof DEFAULT_MARQUEE;
 
 export default function MarqueeSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [contentWidth, setContentWidth] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [numDuplicates, setNumDuplicates] = useState(3); // Start with 3 duplicates
+  const [marqueeData, setMarqueeData] = useState<MarqueeData>(DEFAULT_MARQUEE);
   
-  const content = "Manikandan ✦ Web Developer ✦ Designer ✦ Creator";
-  
+  useEffect(() => {
+    async function fetchMarqueeData() {
+      const query = `*[_type == "marquee"][0]{
+        _id,
+        _type,
+        content
+      }`;
+      const result = await sanityFetch<MarqueeData>(query, DEFAULT_MARQUEE);
+      setMarqueeData(result.data);
+    }
+    fetchMarqueeData();
+  }, []);
+
   useEffect(() => {
     if (!containerRef.current) return;
     
@@ -25,7 +45,7 @@ export default function MarqueeSection() {
       // Create a temporary element to measure content width
       const tempElement = document.createElement('div');
       tempElement.className = 'text-6xl font-bold whitespace-nowrap';
-      tempElement.innerText = content;
+      tempElement.innerText = marqueeData.content;
       document.body.appendChild(tempElement);
       const contentWidth = tempElement.offsetWidth;
       document.body.removeChild(tempElement);
@@ -43,7 +63,7 @@ export default function MarqueeSection() {
     return () => {
       window.removeEventListener('resize', updateWidths);
     };
-  }, [content]);
+  }, [marqueeData.content]);
   
   return (
     <div className="w-full overflow-hidden py-8 bg-black">
@@ -70,7 +90,7 @@ export default function MarqueeSection() {
               key={index} 
               className="inline-block text-6xl font-bold px-8 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-purple-500"
             >
-              {content}
+              {marqueeData.content}
             </span>
           ))}
         </motion.div>

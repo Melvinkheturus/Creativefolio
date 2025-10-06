@@ -8,6 +8,16 @@ const nextConfig = {
     // Disable TypeScript during production builds
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        port: '',
+        pathname: '/images/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
