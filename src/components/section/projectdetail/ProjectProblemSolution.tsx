@@ -1,44 +1,54 @@
 "use client";
 
-import { PortableText } from '@portabletext/react';
 import { motion } from "framer-motion";
-import { Lightbulb, Rocket } from "lucide-react";
-import ProjectCard from "@/components/ui/ProjectCard";
-import { CasestudyType } from "@/types/project";
-import { portableTextComponents } from '@/components/ui/PortableTextComponent';
+import PortableTextComponent from "@/components/ui/PortableTextComponent";
 
 type ProjectProblemSolutionProps = {
-  project: CasestudyType;
+  title: string;
+  content: any;
+  color: string;
 };
 
-export default function ProjectProblemSolution({ project }: ProjectProblemSolutionProps) {
-  if (!project) return null;
+export default function ProjectProblemSolution({
+  title,
+  content,
+  color
+}: ProjectProblemSolutionProps) {
+  const isLeftSide = title === "Problem";
 
   return (
-    <ProjectCard
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.6 }}
+    <motion.div
+      className="relative h-full p-6 rounded-2xl bg-[#040406] border-[#1c0333] overflow-hidden"
+      initial={{
+        opacity: 0,
+        x: isLeftSide ? -20 : 20
+      }}
+      animate={{
+        opacity: 1,
+        x: 0
+      }}
+      transition={{
+        duration: 0.6,
+        delay: isLeftSide ? 0.4 : 0.5
+      }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Problem Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <Lightbulb size={18} className="gradient-text mr-2" />
-            <h3 className="text-white font-medium">Problem</h3>
-          </div>
-          <PortableText value={project.problem} components={portableTextComponents} />
-        </div>
+      {/* Purple gradient corners */}
+      <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Solution Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <Rocket size={18} className="gradient-text mr-2" />
-            <h3 className="text-white font-medium">Solution</h3>
-          </div>
-          <PortableText value={project.solution} components={portableTextComponents} />
+      <div className={`border-l-2 pl-4 relative z-10`} style={{ borderColor: color }}>
+        <h3 className="text-lg font-bold mb-4">
+          <span className="text-white">{title.toUpperCase()}</span>
+        </h3>
+
+        <div className="text-gray-300 text-sm leading-relaxed">
+          {content ? (
+            <PortableTextComponent blocks={content} />
+          ) : (
+            <p>No content available</p>
+          )}
         </div>
       </div>
-    </ProjectCard>
+    </motion.div>
   );
-}
+} 

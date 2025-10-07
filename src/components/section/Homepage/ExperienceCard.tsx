@@ -1,57 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
-import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
 import { motion, useScroll, useSpring, TargetAndTransition } from "framer-motion";
 import { useRef } from "react";
 
-const DEFAULT_EXPERIENCE = [
-  {
-    _id: 'experience-1',
-    _type: 'experience',
-    title: "Web Development Intern",
-    company: "SAIC",
-    year: "2024",
-    description: [
-      "Built and maintained responsive, SEO-friendly websites using WordPress and no-code tools, focusing on UI/UX design, plugin integration, and content management.",
-      "Collaborated on real-world client projects, gaining hands-on experience in website optimization, accessibility, and cross-browser compatibility."
-    ]
-  },
-  {
-    _id: 'experience-2',
-    _type: 'experience',
-    title: "Freelance Web Developer",
-    company: "Self-Employed",
-    year: "NOW",
-    description: [
-      "Delivering custom websites for startups and businesses, covering domain setup, hosting, CMS integration, and on-page SEO optimization.",
-      "Actively expanding skills in modern frameworks (React, Next.js, Tailwind CSS, Framer Motion, Supabase) to provide scalable and future-ready digital solutions."
-    ]
-  }
-];
-
-type ExperienceItem = typeof DEFAULT_EXPERIENCE[0];
-type ExperienceData = ExperienceItem[];
-
-export default function ExperienceCard() {
+export default function Story() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [experienceData, setExperienceData] = useState<ExperienceData>(DEFAULT_EXPERIENCE);
-
-  useEffect(() => {
-    async function fetchExperienceData() {
-      const query = `*[_type == "experience"] | order(year desc){
-        _id,
-        _type,
-        title,
-        company,
-        year,
-        description
-      }`;
-      const result = await sanityFetch<ExperienceData>(query, DEFAULT_EXPERIENCE);
-      setExperienceData(result.data);
-    }
-    fetchExperienceData();
-  }, []);
   
   const { scrollYProgress } = useScroll({
     target: timelineRef,
@@ -65,6 +19,27 @@ export default function ExperienceCard() {
   });
   
   // Animation for the timeline dot
+
+  const experiences = [
+    {
+      title: "Web Development Intern",
+      company: "SAIC",
+      year: "2024",
+      description: [
+        "Built and maintained responsive, SEO-friendly websites using WordPress and no-code tools, focusing on UI/UX design, plugin integration, and content management.",
+        "Collaborated on real-world client projects, gaining hands-on experience in website optimization, accessibility, and cross-browser compatibility."
+      ]
+    },
+    {
+      title: "Freelance Web Developer",
+      company: "Self-Employed",
+      year: "NOW",
+      description: [
+        "Delivering custom websites for startups and businesses, covering domain setup, hosting, CMS integration, and on-page SEO optimization.",
+        "Actively expanding skills in modern frameworks (React, Next.js, Tailwind CSS, Framer Motion, Supabase) to provide scalable and future-ready digital solutions."
+      ]
+    }
+  ];
   
   return (
     <motion.div
@@ -108,12 +83,12 @@ export default function ExperienceCard() {
           
           {/* Timeline entries */}
           <div className="relative z-10 space-y-5 md:space-y-6">
-            {experienceData.map((exp, index) => (
+            {experiences.map((exp, index) => (
               <TimelineEntry
                 key={index}
                 {...exp}
                 delay={index * 0.2}
-                isLast={index === experienceData.length - 1}
+                isLast={index === experiences.length - 1}
               />
             ))}
           </div>

@@ -86,6 +86,7 @@ export default function Work() {
   }, []);
   
   const projects = useMemo(() => {
+    if (!projectsData) return [];
     return projectsData.map((project, index) => ({
       id: index + 1,
       title: project.title,
@@ -211,7 +212,7 @@ export default function Work() {
           onMouseEnter={handleUserInteraction}
           onTouchStart={handleUserInteraction}
         >
-          {projectsData.map((project, index) => (
+          {projectsData?.map((project, index) => (
             <div 
               key={project._id}
               className="flex-none w-full sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] snap-center"
@@ -228,7 +229,7 @@ export default function Work() {
         
         {/* Dotted indicator for auto-scroll */}
         <div className="flex justify-center mt-4 mb-2 gap-2">
-          {projectsData.map((_, index) => (
+          {projectsData?.map((_, index) => (
             <motion.div
               key={index}
               className={`h-2 w-2 rounded-full ${index === activeIndex ? 'bg-purple-500' : 'bg-gray-700'}`}
@@ -276,7 +277,6 @@ const ProjectCard = React.memo(function ProjectCard({ project, delay = 0, index,
                 alt={project.title}
                 width={400}
                 height={225}
-                quality={80}
                 className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700"
                 priority={index < 3} // Only prioritize the first 3 images
                 loading={index < 3 ? "eager" : "lazy"}

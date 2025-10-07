@@ -1,47 +1,19 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
 import { motion } from "framer-motion";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { WordRotate } from "@/components/ui/word-rotate";
 import Image from "next/image";
 
-const DEFAULT_PROFILE = {
-  _id: 'profile-card',
-  _type: 'profile',
-  name: "MANIKANDAN S",
-  profileImage: "/profile.png",
-  profileImageAlt: "Manikandan S - Web Developer, UI/UX Designer & Creative Technologist",
-  designationWords: ["UI/UX Designer", "Developer", "Creative Technologist"],
-  quote: "Crafting clarity in a chaotic digital world."
-};
-
-type ProfileData = typeof DEFAULT_PROFILE;
-
-export default function ProfileCard() {
+export default function Profile() {
   const [isNameHovered, setIsNameHovered] = useState(false);
   const [scrambledName, setScrambledName] = useState("MANIKANDAN S");
   const cardRef = useRef<HTMLDivElement>(null);
-  const [profileData, setProfileData] = useState<ProfileData>(DEFAULT_PROFILE);
-
-  useEffect(() => {
-    async function fetchProfileData() {
-      const query = `*[_type == "profile"][0]{
-        _id,
-        _type,
-        name,
-        "profileImage": profileImage.asset->url,
-        profileImageAlt,
-        designationWords,
-        quote
-      }`;
-      const result = await sanityFetch<ProfileData>(query, DEFAULT_PROFILE);
-      setProfileData(result.data);
-      setScrambledName(result.data.name);
-    }
-    fetchProfileData();
-  }, []);
   
+  const name = "MANIKANDAN S";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const designationWords = ["UI/UX Designer", "Developer", "Creative Technologist"];
+  const quote = "Crafting clarity in a chaotic digital world.";
   
   // Memoized scramble text animation to prevent unnecessary re-renders
   const handleNameHover = useCallback((isHovered: boolean) => {
@@ -49,10 +21,10 @@ export default function ProfileCard() {
     
     // If not hovering, just set the name immediately
     if (!isHovered) {
-      setScrambledName(profileData.name);
+      setScrambledName(name);
       return;
     }
-  }, [profileData.name]);
+  }, []);
   
   // Scramble text animation
   useEffect(() => {
@@ -68,7 +40,7 @@ export default function ProfileCard() {
         prev.split('').map((char, idx) => {
           if (char === ' ') return ' ';
           // If we've hit our max iterations for this character, return the original
-          if (iterations > idx) return profileData.name[idx];
+          if (iterations > idx) return name[idx];
           // Otherwise return a random character
           return characters[Math.floor(Math.random() * characters.length)];
         }).join('')
@@ -78,12 +50,12 @@ export default function ProfileCard() {
       
       if (iterations >= maxIterations) {
         clearInterval(interval);
-        setScrambledName(profileData.name);
+        setScrambledName(name);
       }
     }, 40);
     
     return () => clearInterval(interval);
-  }, [isNameHovered, profileData.name]);
+  }, [isNameHovered]);
   
   return (
     <motion.div
@@ -102,12 +74,11 @@ export default function ProfileCard() {
       {/* Full card image */}
       <div className="absolute inset-0 w-full h-full">
           <Image
-          src={profileData.profileImage}
-          alt={profileData.profileImageAlt}
+          src="/profile.png"
+          alt="Manikandan S - Web Developer, UI/UX Designer & Creative Technologist"
           fill
           className="object-cover object-center"
           priority
-          quality={90}
           sizes="(max-width: 768px) 100vw, 33vw"
           />
       </div>
@@ -133,7 +104,7 @@ export default function ProfileCard() {
         <div className="flex items-center justify-center gap-1">
           <span className="text-sm font-medium text-white tracking-wide">I&apos;m a</span>
           <WordRotate 
-            words={profileData.designationWords}
+            words={designationWords}
             className="text-sm font-medium bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent tracking-wide"
             duration={2000}
             motionProps={{
@@ -148,7 +119,7 @@ export default function ProfileCard() {
 
       <div className="mt-1 cursor-default">
         <p className="text-gray-300 text-xs italic leading-relaxed">
-          &quot;{profileData.quote}&quot;
+          &quot;{quote}&quot;
         </p>
       </div>
     </div>

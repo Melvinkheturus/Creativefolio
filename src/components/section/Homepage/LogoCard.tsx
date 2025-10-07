@@ -1,10 +1,51 @@
-"use client";import { z } from "zod";
-
+"use client";
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
+import { urlFor } from "@/sanity/lib/image";
+
+// Default fallback data
+const DEFAULT_LOGO = {
+  logoImage: null,
+  altText: 'MK Logo',
+  width: 150,
+  height: 150
+};
+
+interface LogoData {
+  logoImage: any;
+  altText: string;
+  width: number;
+  height: number;
+}
 
 export default function LogoCard() {
+  const [logoData, setLogoData] = useState<LogoData>(DEFAULT_LOGO);
+
+  // Fetch data from Sanity CMS
+  useEffect(() => {
+    async function fetchLogoData() {
+      const query = `*[_type == "logo"][0]{
+        _id,
+        _type,
+        logoImage,
+        altText,
+        width,
+        height
+      }`;
+      const result = await sanityFetch<LogoData>(query, DEFAULT_LOGO);
+      setLogoData(result.data);
+    }
+    fetchLogoData();
+  }, []);
+
+  const logoSrc = logoData.logoImage ? urlFor(logoData.logoImage).url() : '/Logo_MK.png';
+  const logoWidth = logoData.width || DEFAULT_LOGO.width;
+  const logoHeight = logoData.height || DEFAULT_LOGO.height;
+  const logoAlt = logoData.altText || DEFAULT_LOGO.altText;
+
   return (
     <motion.div
         className="h-full p-6 rounded-2xl bg-[#040406] border-#1c0333 relative overflow-hidden"
@@ -22,10 +63,10 @@ export default function LogoCard() {
         
         <div className="relative z-10 flex items-center justify-center h-full">
           <Image 
-            src="/Logo_MK.png" 
-            alt="MK Logo" 
-            width={150} 
-            height={150} 
+            src={logoSrc} 
+            alt={logoAlt} 
+            width={logoWidth} 
+            height={logoHeight} 
             className="object-contain w-auto h-auto max-w-[350%] max-h-[350%]" 
             priority
           />

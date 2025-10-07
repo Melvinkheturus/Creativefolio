@@ -1,36 +1,48 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { sanityFetch } from "@/sanity/lib/sanityFetch";
-import { motion } from "framer-motion";
 
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
+// Default fallback data
 const DEFAULT_MARQUEE = {
-  _id: 'marquee-section',
-  _type: 'marquee',
-  content: "Manikandan ✦ Web Developer ✦ Designer ✦ Creator"
+  content: 'Manikandan ✦ Web Developer ✦ Designer ✦ Creator',
+  animationDuration: 20,
+  fontSize: 'text-6xl',
+  padding: 'py-8'
 };
 
-type MarqueeData = typeof DEFAULT_MARQUEE;
+interface MarqueeData {
+  content: string;
+  animationDuration: number;
+  fontSize: string;
+  padding: string;
+}
 
 export default function MarqueeSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [contentWidth, setContentWidth] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [numDuplicates, setNumDuplicates] = useState(3); // Start with 3 duplicates
+  const [numDuplicates, setNumDuplicates] = useState(3);
   const [marqueeData, setMarqueeData] = useState<MarqueeData>(DEFAULT_MARQUEE);
-  
+
+  // Fetch data from Sanity CMS
   useEffect(() => {
     async function fetchMarqueeData() {
       const query = `*[_type == "marquee"][0]{
         _id,
         _type,
-        content
+        content,
+        animationDuration,
+        fontSize,
+        padding
       }`;
       const result = await sanityFetch<MarqueeData>(query, DEFAULT_MARQUEE);
       setMarqueeData(result.data);
     }
     fetchMarqueeData();
   }, []);
-
+  
   useEffect(() => {
     if (!containerRef.current) return;
     
@@ -44,7 +56,7 @@ export default function MarqueeSection() {
       
       // Create a temporary element to measure content width
       const tempElement = document.createElement('div');
-      tempElement.className = 'text-6xl font-bold whitespace-nowrap';
+      tempElement.className = `${marqueeData.fontSize} font-bold whitespace-nowrap`;
       tempElement.innerText = marqueeData.content;
       document.body.appendChild(tempElement);
       const contentWidth = tempElement.offsetWidth;
@@ -63,10 +75,10 @@ export default function MarqueeSection() {
     return () => {
       window.removeEventListener('resize', updateWidths);
     };
-  }, [marqueeData.content]);
+  }, [marqueeData.content, marqueeData.fontSize]);
   
   return (
-    <div className="w-full overflow-hidden py-8 bg-black">
+    <div className={`w-full overflow-hidden ${marqueeData.padding} bg-black`}>
       <div 
         ref={containerRef}
         className="relative whitespace-nowrap"
@@ -80,7 +92,7 @@ export default function MarqueeSection() {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 20, // Adjust speed here
+              duration: marqueeData.animationDuration,
               ease: "linear",
             },
           }}
@@ -88,7 +100,7 @@ export default function MarqueeSection() {
           {Array.from({ length: numDuplicates }).map((_, index) => (
             <span 
               key={index} 
-              className="inline-block text-6xl font-bold px-8 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-purple-500"
+              className={`inline-block ${marqueeData.fontSize} font-bold px-8 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-purple-500`}
             >
               {marqueeData.content}
             </span>

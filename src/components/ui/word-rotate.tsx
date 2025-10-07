@@ -26,6 +26,8 @@ export function WordRotate({
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (!words || words.length === 0) return;
+    
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % words.length);
     }, duration);
@@ -33,6 +35,10 @@ export function WordRotate({
     // Clean up interval on unmount
     return () => clearInterval(interval);
   }, [words, duration]);
+
+  if (!words || words.length === 0) {
+    return null;
+  }
 
   return (
     <div className="overflow-hidden py-2">

@@ -1,4 +1,67 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
+import { groq } from "next-sanity";
+
+export const casestudyBySlugQuery = groq`
+  *[_type == "casestudy" && slug.current == $slug][0] {
+    _id,
+    title,
+    subtitle,
+    category,
+    timeline,
+    role,
+    projectType,
+    "thumbnail": thumbnail.asset->url,
+    "heroImage": heroImage.asset->url,
+    summary,
+    contribution,
+    problem,
+    solution,
+    techStack[]{
+      name,
+      "icon": icon.asset->url
+    },
+    tools,
+    visualShowcase[] {
+      "url": asset->url,
+      alt,
+      caption
+    },
+    features[] {
+      title,
+      description,
+      icon
+    },
+    processPhases[] {
+      phase,
+      description,
+      artifacts[] {
+        type,
+        url
+      }
+    },
+    results[] {
+      metric,
+      value,
+      description
+    },
+    links[] {
+      type,
+      url,
+      icon
+    },
+    mobileShowcase[] {
+      "url": asset->url,
+      alt,
+      caption
+    },
+    mobileFeatures[] {
+      title,
+      description,
+      icon
+    },
+    slug
+  }
+`;
 
 export const casestudy = defineType({
   name: 'casestudy',
@@ -11,10 +74,22 @@ export const casestudy = defineType({
       type: 'reference',
       to: [{ type: 'project' }],
       description: 'Reference to the project this case study belongs to.',
-      hidden: true, // This field will be managed programmatically
+      hidden: true,
     }),
 
-    // ProjectHero fields
+    // CRITICAL: SLUG FIELD (was missing!)
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+      description: 'Click "Generate" to create a slug from the title',
+    }),
+
     defineField({
       name: 'title',
       title: 'Title',
@@ -29,6 +104,21 @@ export const casestudy = defineType({
     defineField({
       name: 'category',
       title: 'Category',
+      type: 'string',
+    }),
+    defineField({
+      name: 'timeline',
+      title: 'Timeline',
+      type: 'string',
+    }),
+    defineField({
+      name: 'role',
+      title: 'Role',
+      type: 'string',
+    }),
+    defineField({
+      name: 'projectType',
+      title: 'Project Type',
       type: 'string',
     }),
     defineField({
@@ -59,6 +149,12 @@ export const casestudy = defineType({
       ],
     }),
     defineField({
+      name: 'tools',
+      title: 'Tools',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
       name: 'thumbnail',
       title: 'Thumbnail',
       type: 'image',
@@ -73,8 +169,14 @@ export const casestudy = defineType({
         }),
       ],
     }),
-
-    // ProjectSummary fields
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    }),
     defineField({
       name: 'summary',
       title: 'Summary',
@@ -85,8 +187,11 @@ export const casestudy = defineType({
         }),
       ],
     }),
-
-    // ProjectProblemSolution fields
+    defineField({
+      name: 'contribution',
+      title: 'Contribution',
+      type: 'text',
+    }),
     defineField({
       name: 'problem',
       title: 'Problem',
@@ -107,8 +212,6 @@ export const casestudy = defineType({
         }),
       ],
     }),
-
-    // ProjectFeatures fields
     defineField({
       name: 'features',
       title: 'Features',
@@ -132,17 +235,12 @@ export const casestudy = defineType({
             defineField({
               name: 'icon',
               title: 'Icon',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
+              type: 'string',
             }),
           ],
         }),
       ],
     }),
-
-    // ProjectProcess fields
     defineField({
       name: 'processPhases',
       title: 'Process Phases',
@@ -154,8 +252,8 @@ export const casestudy = defineType({
           type: 'object',
           fields: [
             defineField({
-              name: 'title',
-              title: 'Title',
+              name: 'phase',
+              title: 'Phase',
               type: 'string',
             }),
             defineField({
@@ -191,8 +289,6 @@ export const casestudy = defineType({
         }),
       ],
     }),
-
-    // ProjectResults fields
     defineField({
       name: 'results',
       title: 'Results',
@@ -204,8 +300,13 @@ export const casestudy = defineType({
           type: 'object',
           fields: [
             defineField({
-              name: 'title',
-              title: 'Title',
+              name: 'metric',
+              title: 'Metric',
+              type: 'string',
+            }),
+            defineField({
+              name: 'value',
+              title: 'Value',
               type: 'string',
             }),
             defineField({
@@ -213,20 +314,10 @@ export const casestudy = defineType({
               title: 'Description',
               type: 'text',
             }),
-            defineField({
-              name: 'icon',
-              title: 'Icon',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
-            }),
           ],
         }),
       ],
     }),
-
-    // ProjectTechStack fields
     defineField({
       name: 'technologies',
       title: 'Technologies',
@@ -254,8 +345,6 @@ export const casestudy = defineType({
         }),
       ],
     }),
-
-    // ProjectLinks fields
     defineField({
       name: 'links',
       title: 'Links',
@@ -267,8 +356,8 @@ export const casestudy = defineType({
           type: 'object',
           fields: [
             defineField({
-              name: 'label',
-              title: 'Label',
+              name: 'type',
+              title: 'Type',
               type: 'string',
             }),
             defineField({
@@ -279,35 +368,23 @@ export const casestudy = defineType({
             defineField({
               name: 'icon',
               title: 'Icon',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
+              type: 'string',
             }),
           ],
         }),
       ],
     }),
-
-    // ProjectVisualShowcase fields
     defineField({
       name: 'visualShowcase',
       title: 'Visual Showcase',
       type: 'array',
       of: [
         defineArrayMember({
-          name: 'imageItem',
-          title: 'Image Item',
-          type: 'object',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
           fields: [
-            defineField({
-              name: 'image',
-              title: 'Image',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
-            }),
             defineField({
               name: 'alt',
               title: 'Alt Text',
@@ -322,26 +399,17 @@ export const casestudy = defineType({
         }),
       ],
     }),
-
-    // MobileVisualShowcase fields
     defineField({
       name: 'mobileShowcase',
       title: 'Mobile Showcase',
       type: 'array',
       of: [
         defineArrayMember({
-          name: 'mobileImage',
-          title: 'Mobile Image',
-          type: 'object',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
           fields: [
-            defineField({
-              name: 'image',
-              title: 'Image',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
-            }),
             defineField({
               name: 'alt',
               title: 'Alt Text',
@@ -379,10 +447,7 @@ export const casestudy = defineType({
             defineField({
               name: 'icon',
               title: 'Icon',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
+              type: 'string',
             }),
           ],
         }),

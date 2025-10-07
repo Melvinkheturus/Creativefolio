@@ -61,6 +61,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const fontClasses = `${geistSans.variable} ${geistMono.variable} antialiased`;
+  
   return (
     <html lang="en">
       <head>
@@ -70,11 +72,10 @@ export default function RootLayout({
         <link rel="icon" href="/Favicon/favicon.ico" />
         <link rel="apple-touch-icon" href="/Favicon/apple-icon.png" />
         <link rel="icon" type="image/svg+xml" href="/Favicon/icon0.svg" />
-        <link rel="manifest" href="/Favicon/manifest.json" />
         <link rel="icon" type="image/png" sizes="192x192" href="/Favicon/web-app-manifest-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/Favicon/web-app-manifest-512x512.png" />
       </head>
-      <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+      <ClientLayoutWrapper fontClasses={fontClasses}>{children}</ClientLayoutWrapper>
     </html>
   );
 }

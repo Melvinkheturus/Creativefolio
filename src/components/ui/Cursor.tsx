@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import "@/styles/Cursor.css";
 import gsap from "gsap";
 
-const Cursor = () => {
+const Cursor = ({ isStudio }: { isStudio: boolean }) => {
   const cursorRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let hover = false;
@@ -50,7 +50,7 @@ const Cursor = () => {
     });
   }, []);
 
-  return <div className="cursor-main" ref={cursorRef}></div>;
+  return <div className={`cursor-main ${isStudio ? 'hidden' : ''}`} ref={cursorRef}></div>;
 };
 
 export default Cursor;

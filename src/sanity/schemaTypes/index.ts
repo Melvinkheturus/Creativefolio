@@ -20,7 +20,8 @@ import experience from './dynamic/homepage/experience'
 import project from './dynamic/homepage/project'
 import testimonial from './dynamic/homepage/testimonial'
 import tool from './dynamic/homepage/tool'
-import { casestudy } from './dynamic/casestudy'
+import { casestudy } from './dynamic/projectdetail/casestudy'
+
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -45,5 +46,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     testimonial,
     tool,
     casestudy,
+
   ],
 }

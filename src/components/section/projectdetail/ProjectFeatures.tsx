@@ -1,10 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, BarChart, Award, LayoutDashboard, Users, Lock, Clipboard, Calculator, FileText, Archive, Settings, Moon, Navigation, CheckCircle, HelpCircle, Mail, Image, Smartphone, MessageCircle, Camera, Sparkles } from "lucide-react";
+import { Calendar, BarChart, Award, LayoutDashboard, Users, Lock, Clipboard, Calculator, FileText, Archive, Settings, Moon, Navigation, CheckCircle, HelpCircle, Mail, Image, Smartphone, MessageCircle, Camera } from "lucide-react";
 import { ReactNode } from "react";
-import ProjectCard from "@/components/ui/ProjectCard";
-import { Project, CasestudyType } from "@/types/project";
 
 type FeatureType = {
   title: string;
@@ -13,17 +11,19 @@ type FeatureType = {
 };
 
 type ProjectFeaturesProps = {
-  project: CasestudyType;
+  features: FeatureType[];
 };
 
-interface FeatureCardProps {
+type FeatureCardProps = {
   title: string;
   description: string;
-  icon: string;
+  icon: ReactNode;
   delay: number;
-}
+  size?: 'small' | 'medium' | 'large';
+};
 
-function FeatureCard({ title, description, icon, delay }: FeatureCardProps) {
+export default function ProjectFeatures({ features }: ProjectFeaturesProps) {
+  // Map icon names to actual icon components
   const getIconComponent = (iconName: string): ReactNode => {
     const icons: Record<string, ReactNode> = {
       "calendar": <Calendar size={24} />,
@@ -45,54 +45,85 @@ function FeatureCard({ title, description, icon, delay }: FeatureCardProps) {
       "image": <Image size={24} />,
       "smartphone": <Smartphone size={24} />,
       "message-circle": <MessageCircle size={24} />,
-      "camera": <Camera size={24} />,
-      "sparkles": <Sparkles size={24} />,
+      "camera": <Camera size={24} />
     };
+    
     return icons[iconName] || <Calendar size={24} />;
   };
 
+  // Assign sizes to features for bento grid layout
+  const featuresWithSizes = features.map((feature, index) => {
+    let size: 'small' | 'medium' | 'large';
+    
+    // Create pattern for varied sizes
+    if (index % 7 === 0) {
+      size = 'large';
+    } else if (index % 3 === 0) {
+      size = 'medium';
+    } else {
+      size = 'small';
+    }
+    
+    return { ...feature, size };
+  });
+  
   return (
     <motion.div
-      className="flex flex-col p-4 bg-[#040406] rounded-lg border border-[#1c0333]"
+      className="relative p-6 rounded-2xl bg-[#040406] border-[#1c0333] overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.5, delay: 0.6 }}
     >
-      <div className="flex items-center mb-2">
-        <span className="gradient-text mr-2">
-          {getIconComponent(icon)}
-        </span>
-        <h4 className="text-white font-medium text-base">{title}</h4>
+      {/* Purple gradient corners */}
+      <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+      
+      <h3 className="text-lg font-bold mb-6 relative z-10">
+        <span className="text-white">KEY </span>
+        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">FEATURES</span>
+      </h3>
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-auto relative z-10">
+        {featuresWithSizes.map((feature, index) => (
+          <FeatureCard 
+            key={index}
+            title={feature.title}
+            description={feature.description}
+            icon={getIconComponent(feature.icon)}
+            delay={0.7 + (index * 0.1)}
+            size={feature.size}
+          />
+        ))}
       </div>
-      <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
     </motion.div>
   );
 }
 
-export default function ProjectFeatures({ project }: ProjectFeaturesProps) {
-  if (!project) return null;
+function FeatureCard({ title, description, icon, delay, size = 'small' }: FeatureCardProps) {
+  // Set grid span based on size
+  const sizeClasses = {
+    small: 'col-span-1 row-span-1',
+    medium: 'col-span-2 row-span-1',
+    large: 'col-span-2 row-span-2'
+  };
 
   return (
-    <ProjectCard
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.5 }}
+    <motion.div
+      className={`bg-[#1D1D1D] p-4 rounded-xl hover:bg-[#252525] transition-all duration-300 border border-[#333] hover:border-purple-500/50 ${sizeClasses[size]}`}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.4 }}
+      whileHover={{ 
+        y: -5,
+        boxShadow: "0 10px 20px rgba(165, 108, 255, 0.1)",
+      }}
     >
-      <div className="flex items-center mb-4">
-        <Sparkles size={18} className="gradient-text mr-2" />
-        <h3 className="text-white font-medium">Key Features</h3>
+      <div className="mb-3 bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">
+        {icon}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {project.features && Array.isArray(project.features) && project.features.map((feature, index) => (
-          <FeatureCard
-            key={index}
-            title={feature.title}
-            description={feature.description}
-            icon={feature.icon}
-            delay={0.6 + (index * 0.1)}
-          />
-        ))}
-      </div>
-    </ProjectCard>
+      
+      <h4 className="text-white text-base font-medium mb-2">{title}</h4>
+      <p className="text-gray-300 text-sm leading-relaxed">{description}</p>
+    </motion.div>
   );
 }

@@ -1,33 +1,52 @@
 "use client";
-import { z } from "zod";
+
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import SectionHeader from "@/components/ui/SectionHeader";
+import { sanityFetch } from "@/sanity/lib/sanityFetch";
+
+// Default fallback data
+const DEFAULT_ABOUT = {
+  title: 'Meet the Creator',
+  sentences: [
+    'Hi there i am Manikandan a designer and creative technologist passionate about crafting meaningful digital experiences.',
+    'With a sharp eye for UI/UX and a strong grasp of emerging tools like AI, I bridge the gap between design and development. I create interfaces that are not only beautiful, but also purposeful and efficient.',
+    'I may not be a traditional developer, but I bring ideas to life from concept to launch blending creativity with execution at every step.',
+    'Let\'s build something meaningful together.'
+  ],
+  highlightedWords: [
+    'Manikandan', 'designer', 'creative technologist',
+    'UI/UX', 'AI', 'ideas to life', 'blending creativity with execution',
+    'meaningful'
+  ]
+};
+
+interface AboutData {
+  title: string;
+  sentences: string[];
+  highlightedWords: string[];
+}
 
 export default function About() {
   const contentRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(contentRef, { once: true, amount: 0.3 });
-  const [revealComplete, setRevealComplete] = useState(false);
+  const [aboutData, setAboutData] = useState<AboutData>(DEFAULT_ABOUT);
 
-  // Mark animation as complete after all sentences are revealed
+  // Fetch data from Sanity CMS
   useEffect(() => {
-    if (isInView) {
-      const timer = setTimeout(() => {
-        setRevealComplete(true);
-      }, 3000); // Slightly longer than the staggered animation total time
-      return () => clearTimeout(timer);
+    async function fetchAboutData() {
+      const query = `*[_type == "about"][0]{
+        _id,
+        _type,
+        title,
+        sentences,
+        highlightedWords
+      }`;
+      const result = await sanityFetch<AboutData>(query, DEFAULT_ABOUT);
+      setAboutData(result.data);
     }
-  }, [isInView]);
-
-  // Animation complete effect
-  useEffect(() => {
-    if (isInView) {
-      const timer = setTimeout(() => {
-        setRevealComplete(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView]);
+    fetchAboutData();
+  }, []);
 
   // Animation variants for sentence reveal
   const containerVariants = {
@@ -52,13 +71,37 @@ export default function About() {
     }
   };
 
-  // Define sentences with highlighted words
-  const sentences = [
-    <>Hi there i am <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">Manikandan</span> a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">designer</span> and <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">creative technologist</span> passionate about crafting meaningful digital experiences.</>,
-    <>With a sharp eye for <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">UI/UX</span> and a strong grasp of emerging tools like <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">AI</span>, I bridge the gap between design and development. I create interfaces that are not only beautiful, but also purposeful and efficient.</>,
-    <>I may not be a traditional developer, but I bring <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">ideas to life</span> from concept to launch <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">blending creativity with execution</span> at every step.</>,
-    <>Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">meaningful</span> together.</>
-  ];
+  // Helper function to highlight words in sentences
+  const highlightSentence = (sentence: string) => {
+    let result: (string | React.ReactNode)[] = [sentence];
+    
+    (aboutData.highlightedWords || []).forEach((word) => {
+      const newResult: (string | React.ReactNode)[] = [];
+      result.forEach((part) => {
+        if (typeof part === 'string') {
+          const parts = part.split(new RegExp(`(${word})`, 'gi'));
+          parts.forEach((p, i) => {
+            if (p.toLowerCase() === word.toLowerCase()) {
+              newResult.push(
+                <span key={`${word}-${i}`} className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-300 to-purple-500 animate-gradient">
+                  {p}
+                </span>
+              );
+            } else if (p) {
+              newResult.push(p);
+            }
+          });
+        } else {
+          newResult.push(part);
+        }
+      });
+      result = newResult;
+    });
+    
+    return <>{result}</>;
+  };
+
+  const sentences = (aboutData.sentences || DEFAULT_ABOUT.sentences).map(sentence => highlightSentence(sentence));
 
   return (
     <motion.div
@@ -76,7 +119,7 @@ export default function About() {
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
       
       <div className="relative z-10">
-        <SectionHeader title="Meet the Creator" />
+        <SectionHeader title={aboutData.title} />
         
         <div 
           ref={contentRef} 

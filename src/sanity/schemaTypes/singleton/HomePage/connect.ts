@@ -1,45 +1,37 @@
 import { defineField, defineType } from 'sanity'
 import { FiLink } from 'react-icons/fi'
 
-export const DEFAULT_CONNECT = {
-  email: 'smk.manikandan.dev',
-  copiedText: 'Copied!',
-  socialLinks: [
-    { platform: 'linkedin', url: 'https://linkedin.com', label: 'LinkedIn Profile' },
-    { platform: 'dribbble', url: 'https://dribbble.com', label: 'Dribbble Portfolio' },
-    { platform: 'instagram', url: 'https://instagram.com', label: 'Instagram Profile' },
-    { platform: 'github', url: 'https://github.com', label: 'GitHub Profile' },
-    { platform: 'whatsapp', url: 'https://wa.me/yournumber', label: 'WhatsApp Contact' },
-  ],
-  displayOrder: 5
-}
-
 export default defineType({
   name: 'connect',
-  title: 'Connect Section',
+  title: '🔗 Social Connect',
   type: 'document',
   icon: FiLink,
-
+  description: 'Manage email and social media links',
   fields: [
     defineField({
       name: 'email',
       title: 'Email Address',
       type: 'string',
-      initialValue: DEFAULT_CONNECT.email,
-      validation: (Rule) => Rule.required(),
+      description: 'Your contact email (click-to-copy feature)',
+      validation: (Rule) => Rule.required().email(),
     }),
     defineField({
       name: 'copiedText',
-      title: 'Copied Confirmation Text',
+      title: 'Copy Confirmation Text',
       type: 'string',
-      initialValue: DEFAULT_CONNECT.copiedText,
+      description: 'Text shown when email is copied to clipboard',
+      initialValue: 'Copied!',
+      validation: (Rule) => Rule.required().max(20),
     }),
     defineField({
       name: 'socialLinks',
       title: 'Social Media Links',
       type: 'array',
+      description: 'Add your social media profiles (drag to reorder)',
       of: [{
         type: 'object',
+        name: 'socialLink',
+        title: 'Social Link',
         fields: [
           {
             name: 'platform',
@@ -47,56 +39,77 @@ export default defineType({
             type: 'string',
             options: {
               list: [
-                { title: 'LinkedIn', value: 'linkedin' },
-                { title: 'Dribbble', value: 'dribbble' },
-                { title: 'Instagram', value: 'instagram' },
-                { title: 'GitHub', value: 'github' },
-                { title: 'WhatsApp', value: 'whatsapp' },
-                { title: 'Twitter', value: 'twitter' },
-                { title: 'Facebook', value: 'facebook' },
-                { title: 'YouTube', value: 'youtube' },
-                { title: 'Behance', value: 'behance' },
-                { title: 'Medium', value: 'medium' },
+                { title: '💼 LinkedIn', value: 'linkedin' },
+                { title: '🎨 Dribbble', value: 'dribbble' },
+                { title: '📸 Instagram', value: 'instagram' },
+                { title: '💻 GitHub', value: 'github' },
+                { title: '💬 WhatsApp', value: 'whatsapp' },
+                { title: '🐦 Twitter', value: 'twitter' },
+                { title: '📘 Facebook', value: 'facebook' },
+                { title: '📺 YouTube', value: 'youtube' },
+                { title: '🎭 Behance', value: 'behance' },
+                { title: '📝 Medium', value: 'medium' },
               ],
+              layout: 'dropdown',
             },
             validation: (Rule) => Rule.required(),
           },
           {
             name: 'url',
-            title: 'URL',
+            title: 'Profile URL',
             type: 'url',
-            validation: (Rule) => Rule.required(),
+            validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
           },
           {
             name: 'label',
             title: 'Accessibility Label',
             type: 'string',
+            description: 'Screen reader description (e.g., "LinkedIn Profile")',
+            validation: (Rule) => Rule.required(),
+          },
+          {
+            name: 'isActive',
+            title: 'Show Link',
+            type: 'boolean',
+            description: 'Toggle to show/hide this social link',
+            initialValue: true,
           },
         ],
         preview: {
           select: {
-            title: 'platform',
-            subtitle: 'url',
+            platform: 'platform',
+            url: 'url',
+            isActive: 'isActive',
+          },
+          prepare({ platform, url, isActive }) {
+            return {
+              title: platform?.toUpperCase() || 'Social Link',
+              subtitle: isActive ? url : '✗ Hidden',
+            }
           },
         },
       }],
-      initialValue: DEFAULT_CONNECT.socialLinks,
+      validation: (Rule) => Rule.max(10).warning('Consider showing only your most important social links'),
     }),
     defineField({
-      name: 'displayOrder',
-      title: 'Display Order',
-      type: 'number',
-      initialValue: DEFAULT_CONNECT.displayOrder,
-      validation: (Rule) => Rule.required(),
+      name: 'isVisible',
+      title: 'Show Section',
+      type: 'boolean',
+      description: 'Toggle to show/hide the entire connect section',
+      initialValue: true,
     }),
   ],
   preview: {
     select: {
-      title: 'email',
+      email: 'email',
+      isVisible: 'isVisible',
+      socialLinks: 'socialLinks',
     },
-    prepare({ title }) {
+    prepare({ email, isVisible, socialLinks }) {
+      const activeLinks = socialLinks?.filter((link: any) => link.isActive).length || 0;
       return {
-        title: title || 'Connect Section',
+        title: email || 'Social Connect',
+        subtitle: isVisible ? `✓ Visible • ${activeLinks} active links` : '✗ Hidden',
       }
     },
   },

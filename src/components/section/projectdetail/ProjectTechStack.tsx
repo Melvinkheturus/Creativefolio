@@ -2,16 +2,36 @@
 
 import { motion } from "framer-motion";
 import { Code, Wrench, Layers } from "lucide-react";
-import ProjectCard from "@/components/ui/ProjectCard";
 
-import { Project, TechItemType, CasestudyType } from "@/types/project";
-
-interface TechBadgeProps {
+interface TechStack {
   name: string;
-  delay: number;
+  icon?: string;
 }
 
-function TechBadge({ name, delay }: TechBadgeProps) {
+interface Project {
+  techStack?: TechStack[] | string[];
+  tools?: string[];
+  projectType?: string;
+}
+
+type ProjectTechStackProps = {
+  project: Project;
+};
+
+type TechBadgeProps = {
+  name: string;
+  icon?: string;
+  delay: number;
+};
+
+// Safe function to handle tech stack rendering
+const getTechName = (tech: TechStack | string): string => {
+  if (typeof tech === 'string') return tech;
+  if (tech && typeof tech === 'object' && tech.name) return tech.name;
+  return String(tech);
+};
+
+function TechBadge({ name, icon, delay }: TechBadgeProps) {
   return (
     <motion.div
       className="relative group"
@@ -19,7 +39,8 @@ function TechBadge({ name, delay }: TechBadgeProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <div className="badge flex items-center gap-2">
+      <div className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333] hover:border-purple-500/50 transition-colors flex items-center gap-2">
+        {icon && <img src={icon} alt={name} className="w-4 h-4" />}
         {name}
       </div>
       
@@ -30,40 +51,85 @@ function TechBadge({ name, delay }: TechBadgeProps) {
   );
 }
 
-type ProjectTechStackProps = {
-  project: CasestudyType;
-};
-
 export default function ProjectTechStack({ project }: ProjectTechStackProps) {
   if (!project) return null;
   
   return (
-    <ProjectCard
+    <motion.div
+      className="relative p-6 rounded-2xl bg-[#040406] border-[#1c0333] overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Purple gradient corners */}
+      <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
         {/* Tech Stack Section */}
         <div>
           <div className="flex items-center mb-4">
-            <Code size={18} className="gradient-text mr-2" />
+            <Code size={18} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
             <h3 className="text-white font-medium">Tech Stack</h3>
           </div>
           
           <div className="flex flex-wrap gap-2">
-            {project.techStack && Array.isArray(project.techStack) && project.techStack.map((tech: TechItemType, index: number) => {
+            {project.techStack && Array.isArray(project.techStack) && project.techStack.map((tech, index) => {
+              // Handle both object and string formats
+              const techName = getTechName(tech);
+              const techIcon = typeof tech === 'object' && tech.icon ? tech.icon : undefined;
+              
               return (
                 <TechBadge 
                   key={index} 
-                  name={tech.name} 
+                  name={techName} 
+                  icon={techIcon} 
                   delay={0.4 + (index * 0.05)}
                 />
               );
             })}
           </div>
         </div>
+        
+        {/* Tools Section */}
+        <div>
+          <div className="flex items-center mb-4">
+            <Wrench size={18} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
+            <h3 className="text-white font-medium">Tools Used</h3>
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            {project.tools && Array.isArray(project.tools) && project.tools.map((tool, index) => (
+              <motion.span
+                key={index}
+                className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333] hover:border-purple-500/50 transition-colors"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + (index * 0.05) }}
+              >
+                {tool}
+              </motion.span>
+            ))}
+          </div>
+        </div>
+        
+        {/* Project Type Section */}
+        <div>
+          <div className="flex items-center mb-4">
+            <Layers size={18} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
+            <h3 className="text-white font-medium">Project Type</h3>
+          </div>
+          
+          <motion.div
+            className="bg-[#1D1D1D] rounded-lg p-3 border border-[#333] inline-block"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            <p className="text-gray-300 text-sm">{project.projectType || "Project"}</p>
+          </motion.div>
+        </div>
       </div>
-    </ProjectCard>
+    </motion.div>
   );
 }
