@@ -78,7 +78,6 @@
   },
   "cleanUrls": true,
   "trailingSlash": false,
-  "compress": true,
   "framework": {
     "name": "nextjs"
   },
