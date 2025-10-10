@@ -1,4 +1,7 @@
 {
+  "framework": "nextjs",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
@@ -25,7 +28,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.vercel-insights.com; frame-src 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.sanity.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://cdn.sanity.io https://*.sanitycdn.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.vercel-insights.com https://*.sanity.io; frame-src 'none';"
         }
       ]
     },
@@ -67,19 +70,36 @@
     }
   ],
   "images": {
-    "sizes": [640, 750, 828, 1080, 1200, 1920],
+    "sizes": [
+      640,
+      750,
+      828,
+      1080,
+      1200,
+      1920,
+      2048
+    ],
     "remotePatterns": [
       {
         "protocol": "https",
-        "hostname": "**"
+        "hostname": "cdn.sanity.io"
+      },
+      {
+        "protocol": "https",
+        "hostname": "**.sanitycdn.com"
+      },
+      {
+        "protocol": "https",
+        "hostname": "images.unsplash.com"
+      },
+      {
+        "protocol": "https",
+        "hostname": "assets.codepen.io"
       }
     ],
-    "minimumCacheTTL": 60
-  },
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "framework": {
-    "name": "nextjs"
+    "minimumCacheTTL": 60,
+    "dangerouslyAllowSVG": true,
+    "contentSecurityPolicy": "default-src 'self'; script-src 'none'; sandbox;"
   },
   "redirects": [
     {
@@ -88,4 +108,4 @@
       "permanent": true
     }
   ]
-} 
+}
