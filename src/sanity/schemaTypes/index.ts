@@ -22,7 +22,6 @@ import testimonial from './dynamic/homepage/testimonial'
 import tool from './dynamic/homepage/tool'
 import { casestudy } from './dynamic/projectdetail/casestudy'
 
-
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     // Singleton schemas
@@ -46,6 +45,5 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     testimonial,
     tool,
     casestudy,
-
   ],
 }

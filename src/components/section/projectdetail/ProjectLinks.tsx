@@ -4,10 +4,16 @@ import { motion } from "framer-motion";
 import { Github, Figma, ExternalLink, FileText } from "lucide-react";
 import { ReactNode } from "react";
 
+type IconType = {
+  type: 'library' | 'image';
+  libraryIcon?: string;
+  customImage?: string;
+};
+
 type LinkType = {
-  label: string;
+  type: string;
   url: string;
-  icon: string;
+  icon: IconType | null;
 };
 
 type ProjectLinksProps = {
@@ -23,12 +29,26 @@ type LinkCardProps = {
 
 export default function ProjectLinks({ links }: ProjectLinksProps) {
   // Map icon names to actual icon components
-  const getIconComponent = (iconName: string): ReactNode => {
+  const getIconComponent = (iconData: IconType | null): ReactNode => {
+    if (!iconData) return <ExternalLink size={20} />;
+    
+    // If it's a custom image
+    if (iconData.type === 'image' && iconData.customImage) {
+      return <img src={iconData.customImage} alt="Link icon" className="w-5 h-5" />;
+    }
+    
+    // If it's a library icon
+    const iconName = iconData.libraryIcon;
+    if (!iconName) return <ExternalLink size={20} />;
+    
     const icons: Record<string, ReactNode> = {
       "github": <Github size={20} />,
       "figma": <Figma size={20} />,
       "external-link": <ExternalLink size={20} />,
-      "file-text": <FileText size={20} />
+      "file-text": <FileText size={20} />,
+      "globe": <ExternalLink size={20} />,
+      "link": <ExternalLink size={20} />,
+      "download": <ExternalLink size={20} />
     };
     
     return icons[iconName] || <ExternalLink size={20} />;
@@ -54,7 +74,7 @@ export default function ProjectLinks({ links }: ProjectLinksProps) {
         {links?.map((link, index) => (
           <LinkCard 
             key={index}
-            label={link.label}
+            label={link.type}
             url={link.url}
             icon={getIconComponent(link.icon)}
             delay={1.1 + (index * 0.1)}
@@ -71,16 +91,16 @@ function LinkCard({ label, url, icon, delay }: LinkCardProps) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center p-3 bg-[#1D1D1D] rounded-lg hover:bg-[#252525] transition-all duration-300 border border-[#333] hover:border-purple-500/50 group"
+      className="flex items-center p-4 bg-white/5 backdrop-blur-sm rounded-lg hover:bg-white/10 transition-all duration-300 border border-white/10 hover:border-purple-500/30 group"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
       whileHover={{ 
         y: -3,
-        boxShadow: "0 8px 20px rgba(165, 108, 255, 0.1)",
+        boxShadow: "0 20px 40px rgba(165, 108, 255, 0.15)",
       }}
     >
-      <div className="mr-3 p-2 rounded-full bg-[#252525] group-hover:bg-[#2A2A2A] transition-colors">
+      <div className="mr-3 p-2 rounded-full bg-white/10 backdrop-blur-sm group-hover:bg-white/15 transition-colors">
         <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent group-hover:scale-110 transition-transform block">
           {icon}
         </span>

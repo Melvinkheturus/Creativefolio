@@ -1,24 +1,31 @@
 'use client';
 
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import PersonSchema from "@/components/PersonSchema";
 import Cursor from "@/components/ui/Cursor";
 import { usePathname } from "next/navigation";
 
-export default function ClientLayoutWrapper({ 
-  children, 
-  fontClasses 
-}: { 
-  children: React.ReactNode;
-  fontClasses: string;
-}) {
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isStudio = pathname.startsWith('/studio');
 
   return (
-    <body className={fontClasses}>
+    <body
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
       <PersonSchema />
-      <Cursor isStudio={isStudio} />
+      {!isStudio && <Cursor />}
       {children}
     </body>
   );

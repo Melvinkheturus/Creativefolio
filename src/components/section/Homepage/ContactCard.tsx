@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Ripple } from "@/components/ui/ripple";
 import { sanityFetch } from "@/sanity/lib/sanityFetch";
+import { Check } from "lucide-react";
 
 // Default fallback data
 const DEFAULT_CONTACT = {
@@ -41,6 +42,8 @@ export default function ContactCard() {
     email: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Fetch data from Sanity CMS
   useEffect(() => {
@@ -69,14 +72,40 @@ export default function ContactCard() {
     }));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
-    // For now, we'll just close the form and reset it
-    setIsFormOpen(false);
-    setFormData({ name: '', email: '', message: '' });
-    // You could also show a success message
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        // Show success animation
+        setShowSuccess(true);
+        setIsFormOpen(false);
+        setFormData({ name: '', email: '', message: '' });
+        
+        // Hide success animation after 3 seconds
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 3000);
+      } else {
+        // Handle error
+        console.error('Failed to send message');
+        alert('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -95,6 +124,75 @@ export default function ContactCard() {
         <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-purple-600/20 rounded-full blur-2xl pointer-events-none" />
 
         <Ripple />
+
+        {/* Success Animation Overlay */}
+        <AnimatePresence>
+          {showSuccess && (
+            <motion.div
+              className="absolute inset-0 bg-purple-600/95 backdrop-blur-sm flex items-center justify-center z-50 rounded-2xl"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <motion.div
+                className="flex flex-col items-center"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                {/* Animated Check Circle */}
+                <motion.div
+                  className="relative mb-4"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ 
+                    delay: 0.3, 
+                    duration: 0.6, 
+                    type: "spring", 
+                    stiffness: 200, 
+                    damping: 15 
+                  }}
+                >
+                  {/* Outer ring animation */}
+                  <motion.div
+                    className="absolute inset-0 border-4 border-white rounded-full"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1.2, opacity: 0 }}
+                    transition={{
+                      delay: 0.5,
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "easeOut"
+                    }}
+                  />
+                  
+                  {/* Main check circle */}
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.6, duration: 0.3 }}
+                    >
+                      <Check size={32} className="text-purple-600" strokeWidth={3} />
+                    </motion.div>
+                  </div>
+                </motion.div>
+
+                {/* Success Text */}
+                <motion.div
+                  className="text-center"
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 0.4 }}
+                >
+                  <h3 className="text-white text-xl font-bold mb-1">Message Sent!</h3>
+                  <p className="text-purple-100 text-sm">Thanks for reaching out. I'll get back to you soon.</p>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         
         {/* Card header with toggle button */}
@@ -172,11 +270,12 @@ export default function ContactCard() {
                 </div>
               <motion.button
                   type="submit"
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-1 px-4 rounded transition-colors duration-300 text-xs mt-1"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  disabled={isSubmitting}
+                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 disabled:cursor-not-allowed text-white font-medium py-1 px-4 rounded transition-colors duration-300 text-xs mt-1"
+                  whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                  whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                 >
-                  {contactData.formFields?.submitButtonText || DEFAULT_CONTACT.formFields.submitButtonText}
+                  {isSubmitting ? 'Sending...' : (contactData.formFields?.submitButtonText || DEFAULT_CONTACT.formFields.submitButtonText)}
                 </motion.button>
             </form>
           )}

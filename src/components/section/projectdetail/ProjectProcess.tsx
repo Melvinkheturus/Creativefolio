@@ -74,8 +74,8 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
                 key={index}
                 className={`flex items-center p-3 rounded-lg text-left w-full transition-all duration-300 ${
                   activePhase === index 
-                    ? 'bg-[#252525] border border-purple-500/50' 
-                    : 'bg-[#1D1D1D] hover:bg-[#252525] border border-[#333]'
+                    ? 'bg-white/10 backdrop-blur-sm border border-purple-500/50' 
+                    : 'bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10'
                 }`}
                 onClick={() => setActivePhase(index)}
                 whileHover={{ x: activePhase === index ? 0 : 3 }}
@@ -100,7 +100,7 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="bg-[#1D1D1D] rounded-lg p-5 border border-[#333]"
+                className="bg-white/5 backdrop-blur-sm rounded-lg p-5 border border-white/10"
               >
                 <h4 className="text-white text-base font-medium mb-3">
                   {process[activePhase].phase}
@@ -120,7 +120,7 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
                           href={artifact.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-1 text-xs bg-[#252525] text-gray-300 rounded-full border border-[#333] hover:border-purple-500/50 transition-colors"
+                          className="px-3 py-1 text-xs bg-white/10 backdrop-blur-sm text-gray-300 rounded-full border border-white/20 hover:border-purple-500/50 transition-colors"
                           whileHover={{ scale: 1.05 }}
                         >
                           {artifact.label}

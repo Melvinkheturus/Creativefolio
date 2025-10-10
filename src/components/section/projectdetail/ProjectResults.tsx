@@ -110,14 +110,14 @@ function ResultMetric({ metric, value, description, delay }: ResultMetricProps) 
   return (
     <motion.div
       ref={ref}
-      className="bg-[#1D1D1D] p-5 rounded-xl border border-[#333] hover:border-purple-500/50 transition-all duration-300"
+      className="bg-white/5 backdrop-blur-sm border border-white/10 p-5 rounded-xl hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
-      whileHover={{ scale: 1.03, boxShadow: "0 10px 20px rgba(165, 108, 255, 0.1)" }}
+      whileHover={{ scale: 1.03, boxShadow: "0 20px 40px rgba(165, 108, 255, 0.15)" }}
     >
       <div className="flex items-center mb-3">
-        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2">{getIcon()}</span>
+        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2 group-hover:scale-110 transition-transform duration-300">{getIcon()}</span>
         <h4 className="text-white text-sm font-medium">{metric || 'Metric'}</h4>
       </div>
       

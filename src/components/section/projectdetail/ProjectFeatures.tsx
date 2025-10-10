@@ -1,13 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, BarChart, Award, LayoutDashboard, Users, Lock, Clipboard, Calculator, FileText, Archive, Settings, Moon, Navigation, CheckCircle, HelpCircle, Mail, Image, Smartphone, MessageCircle, Camera } from "lucide-react";
 import { ReactNode } from "react";
 
 type FeatureType = {
   title: string;
   description: string;
-  icon: string;
+  imageUrl: string;
 };
 
 type ProjectFeaturesProps = {
@@ -17,55 +16,12 @@ type ProjectFeaturesProps = {
 type FeatureCardProps = {
   title: string;
   description: string;
-  icon: ReactNode;
+  imageUrl: string;
   delay: number;
-  size?: 'small' | 'medium' | 'large';
 };
 
 export default function ProjectFeatures({ features }: ProjectFeaturesProps) {
-  // Map icon names to actual icon components
-  const getIconComponent = (iconName: string): ReactNode => {
-    const icons: Record<string, ReactNode> = {
-      "calendar": <Calendar size={24} />,
-      "bar-chart": <BarChart size={24} />,
-      "award": <Award size={24} />,
-      "layout-dashboard": <LayoutDashboard size={24} />,
-      "users": <Users size={24} />,
-      "lock": <Lock size={24} />,
-      "clipboard": <Clipboard size={24} />,
-      "calculator": <Calculator size={24} />,
-      "file-text": <FileText size={24} />,
-      "archive": <Archive size={24} />,
-      "settings": <Settings size={24} />,
-      "moon": <Moon size={24} />,
-      "navigation": <Navigation size={24} />,
-      "check-circle": <CheckCircle size={24} />,
-      "help-circle": <HelpCircle size={24} />,
-      "mail": <Mail size={24} />,
-      "image": <Image size={24} />,
-      "smartphone": <Smartphone size={24} />,
-      "message-circle": <MessageCircle size={24} />,
-      "camera": <Camera size={24} />
-    };
-    
-    return icons[iconName] || <Calendar size={24} />;
-  };
-
-  // Assign sizes to features for bento grid layout
-  const featuresWithSizes = features.map((feature, index) => {
-    let size: 'small' | 'medium' | 'large';
-    
-    // Create pattern for varied sizes
-    if (index % 7 === 0) {
-      size = 'large';
-    } else if (index % 3 === 0) {
-      size = 'medium';
-    } else {
-      size = 'small';
-    }
-    
-    return { ...feature, size };
-  });
+  if (!features || features.length === 0) return null;
   
   return (
     <motion.div
@@ -78,52 +34,55 @@ export default function ProjectFeatures({ features }: ProjectFeaturesProps) {
       <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
       
-      <h3 className="text-lg font-bold mb-6 relative z-10">
-        <span className="text-white">KEY </span>
-        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">FEATURES</span>
+      <h3 className="text-lg font-bold mb-8 relative z-10">
+        <span className="text-white">FEATURE </span>
+        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">GALLERY</span>
       </h3>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-auto relative z-10">
-        {featuresWithSizes.map((feature, index) => (
-          <FeatureCard 
-            key={index}
-            title={feature.title}
-            description={feature.description}
-            icon={getIconComponent(feature.icon)}
-            delay={0.7 + (index * 0.1)}
-            size={feature.size}
-          />
+      {/* Masonry Grid Layout for Images */}
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 relative z-10">
+        {features.map((feature, index) => (
+          <div key={index} className="break-inside-avoid mb-6">
+            <FeatureCard 
+              title={feature.title}
+              description={feature.description}
+              imageUrl={feature.imageUrl}
+              delay={0.7 + (index * 0.1)}
+            />
+          </div>
         ))}
       </div>
     </motion.div>
   );
 }
 
-function FeatureCard({ title, description, icon, delay, size = 'small' }: FeatureCardProps) {
-  // Set grid span based on size
-  const sizeClasses = {
-    small: 'col-span-1 row-span-1',
-    medium: 'col-span-2 row-span-1',
-    large: 'col-span-2 row-span-2'
-  };
-
+function FeatureCard({ title, description, imageUrl, delay }: FeatureCardProps) {
   return (
     <motion.div
-      className={`bg-[#1D1D1D] p-4 rounded-xl hover:bg-[#252525] transition-all duration-300 border border-[#333] hover:border-purple-500/50 ${sizeClasses[size]}`}
+      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group overflow-hidden"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.4 }}
       whileHover={{ 
         y: -5,
-        boxShadow: "0 10px 20px rgba(165, 108, 255, 0.1)",
+        boxShadow: "0 20px 40px rgba(165, 108, 255, 0.15)",
       }}
     >
-      <div className="mb-3 bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">
-        {icon}
+      {/* Feature Image */}
+      <div className="relative overflow-hidden">
+        <img 
+          src={imageUrl} 
+          alt={title}
+          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
       
-      <h4 className="text-white text-base font-medium mb-2">{title}</h4>
-      <p className="text-gray-300 text-sm leading-relaxed">{description}</p>
+      {/* Content */}
+      <div className="p-6">
+        <h4 className="text-white text-lg font-semibold mb-3">{title}</h4>
+        <p className="text-gray-300 text-sm leading-relaxed">{description}</p>
+      </div>
     </motion.div>
   );
 }

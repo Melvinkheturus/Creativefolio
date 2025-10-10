@@ -16,20 +16,23 @@ export const casestudyBySlugQuery = groq`
     contribution,
     problem,
     solution,
-    techStack[]{
+    techStack[] {
       name,
       "icon": icon.asset->url
     },
-    tools,
+
     visualShowcase[] {
       "url": asset->url,
       alt,
-      caption
+      caption,
+      title,
+      subtitle,
+      location
     },
     features[] {
       title,
       description,
-      icon
+      "imageUrl": image.asset->url
     },
     processPhases[] {
       phase,
@@ -47,7 +50,11 @@ export const casestudyBySlugQuery = groq`
     links[] {
       type,
       url,
-      icon
+      icon {
+        type,
+        libraryIcon,
+        "customImage": customImage.asset->url
+      }
     },
     mobileShowcase[] {
       "url": asset->url,
@@ -128,17 +135,18 @@ export const casestudy = defineType({
       of: [
         defineArrayMember({
           name: 'techItem',
-          title: 'Tech Item',
+          title: 'Technology',
           type: 'object',
           fields: [
             defineField({
               name: 'name',
-              title: 'Name',
+              title: 'Technology Name',
               type: 'string',
+              validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'icon',
-              title: 'Icon',
+              title: 'Technology Icon',
               type: 'image',
               options: {
                 hotspot: true,
@@ -148,12 +156,7 @@ export const casestudy = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'tools',
-      title: 'Tools',
-      type: 'array',
-      of: [{ type: 'string' }],
-    }),
+
     defineField({
       name: 'thumbnail',
       title: 'Thumbnail',
@@ -214,7 +217,7 @@ export const casestudy = defineType({
     }),
     defineField({
       name: 'features',
-      title: 'Features',
+      title: 'Feature Gallery',
       type: 'array',
       of: [
         defineArrayMember({
@@ -233,9 +236,13 @@ export const casestudy = defineType({
               type: 'text',
             }),
             defineField({
-              name: 'icon',
-              title: 'Icon',
-              type: 'string',
+              name: 'image',
+              title: 'Feature Image',
+              type: 'image',
+              options: {
+                hotspot: true,
+              },
+              validation: (Rule) => Rule.required(),
             }),
           ],
         }),
@@ -318,33 +325,7 @@ export const casestudy = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'technologies',
-      title: 'Technologies',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          name: 'technology',
-          title: 'Technology',
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'name',
-              title: 'Name',
-              type: 'string',
-            }),
-            defineField({
-              name: 'icon',
-              title: 'Icon',
-              type: 'image',
-              options: {
-                hotspot: true,
-              },
-            }),
-          ],
-        }),
-      ],
-    }),
+
     defineField({
       name: 'links',
       title: 'Links',
@@ -368,7 +349,47 @@ export const casestudy = defineType({
             defineField({
               name: 'icon',
               title: 'Icon',
-              type: 'string',
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'type',
+                  title: 'Icon Type',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'Icon Library', value: 'library' },
+                      { title: 'Custom Image', value: 'image' }
+                    ]
+                  },
+                  initialValue: 'library'
+                }),
+                defineField({
+                  name: 'libraryIcon',
+                  title: 'Library Icon',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'Github', value: 'github' },
+                      { title: 'Figma', value: 'figma' },
+                      { title: 'External Link', value: 'external-link' },
+                      { title: 'File Text', value: 'file-text' },
+                      { title: 'Globe', value: 'globe' },
+                      { title: 'Link', value: 'link' },
+                      { title: 'Download', value: 'download' }
+                    ]
+                  },
+                  hidden: ({ parent }) => parent?.type !== 'library'
+                }),
+                defineField({
+                  name: 'customImage',
+                  title: 'Custom Image',
+                  type: 'image',
+                  options: {
+                    hotspot: true,
+                  },
+                  hidden: ({ parent }) => parent?.type !== 'image'
+                })
+              ]
             }),
           ],
         }),
@@ -389,11 +410,31 @@ export const casestudy = defineType({
               name: 'alt',
               title: 'Alt Text',
               type: 'string',
+              validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'caption',
-              title: 'Caption',
+              title: 'Caption/Description',
+              type: 'text',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'title',
+              title: 'Title (First Line)',
               type: 'string',
+              description: 'Main title for the showcase item',
+            }),
+            defineField({
+              name: 'subtitle',
+              title: 'Subtitle (Second Line)',
+              type: 'string',
+              description: 'Secondary title for the showcase item',
+            }),
+            defineField({
+              name: 'location',
+              title: 'Location/Category',
+              type: 'string',
+              description: 'Location or category label',
             }),
           ],
         }),

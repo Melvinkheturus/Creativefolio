@@ -17,6 +17,11 @@ const config: Config = {
         inter: ["var(--font-inter)"],
         allura: ["var(--font-allura)"],
       },
+      gridTemplateColumns: {
+        '3': 'repeat(3, minmax(0, 1fr))',
+        '4': 'repeat(4, minmax(0, 1fr))',
+        '5': 'repeat(5, minmax(0, 1fr))',
+      },
       keyframes: {
         shimmer: {
           '0%': { backgroundPosition: '0% 50%' },

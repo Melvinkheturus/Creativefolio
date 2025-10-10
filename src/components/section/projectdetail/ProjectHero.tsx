@@ -59,13 +59,13 @@ export default function ProjectHero({ project }: ProjectHeroProps) {
           )}
           
           <div className="flex flex-wrap gap-2">
-            {techStack.slice(0, 4).map((tech: TechItem, index: number) => (
+            {techStack.filter(tech => tech && tech.name).slice(0, 4).map((tech: TechItem, index: number) => (
               <span key={index} className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333] hover:border-purple-500/50 transition-colors">
                 {tech.name}
               </span>
             ))}
-            {techStack.length > 4 && (
-              <span className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333]">+{techStack.length - 4} more</span>
+            {techStack.filter(tech => tech && tech.name).length > 4 && (
+              <span className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333]">+{techStack.filter(tech => tech && tech.name).length - 4} more</span>
             )}
           </div>
         </div>

@@ -32,9 +32,18 @@ export default function ProjectProblemSolution({
         delay: isLeftSide ? 0.4 : 0.5
       }}
     >
-      {/* Purple gradient corners */}
-      <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+      {/* Dynamic gradient corners based on problem/solution */}
+      {title === "Problem" ? (
+        <>
+          <div className="absolute -top-20 -left-20 w-40 h-40 bg-red-500/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-red-600/20 rounded-full blur-3xl pointer-events-none" />
+        </>
+      ) : (
+        <>
+          <div className="absolute -top-20 -left-20 w-40 h-40 bg-green-500/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-green-600/20 rounded-full blur-3xl pointer-events-none" />
+        </>
+      )}
 
       <div className={`border-l-2 pl-4 relative z-10`} style={{ borderColor: color }}>
         <h3 className="text-lg font-bold mb-4">

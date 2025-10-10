@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code, Wrench, Layers } from "lucide-react";
+import { Code } from "lucide-react";
 
 interface TechStack {
   name: string;
@@ -10,50 +10,25 @@ interface TechStack {
 
 interface Project {
   techStack?: TechStack[] | string[];
-  tools?: string[];
   projectType?: string;
+  timeline?: string;
+  role?: string;
 }
 
 type ProjectTechStackProps = {
   project: Project;
 };
 
-type TechBadgeProps = {
-  name: string;
-  icon?: string;
-  delay: number;
-};
-
 // Safe function to handle tech stack rendering
-const getTechName = (tech: TechStack | string): string => {
+const getTechName = (tech: TechStack | string | null): string => {
+  if (!tech) return '';
   if (typeof tech === 'string') return tech;
   if (tech && typeof tech === 'object' && tech.name) return tech.name;
-  return String(tech);
+  return '';
 };
 
-function TechBadge({ name, icon, delay }: TechBadgeProps) {
-  return (
-    <motion.div
-      className="relative group"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-    >
-      <div className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333] hover:border-purple-500/50 transition-colors flex items-center gap-2">
-        {icon && <img src={icon} alt={name} className="w-4 h-4" />}
-        {name}
-      </div>
-      
-      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-        <span className="text-xs text-gray-400 whitespace-nowrap">{name}</span>
-      </div>
-    </motion.div>
-  );
-}
-
-export default function ProjectTechStack({ project }: ProjectTechStackProps) {
-  if (!project) return null;
-  
+// Tech Stack Card Component
+function TechStackCard({ project }: { project: Project }) {
   return (
     <motion.div
       className="relative p-6 rounded-2xl bg-[#040406] border-[#1c0333] overflow-hidden"
@@ -64,72 +39,95 @@ export default function ProjectTechStack({ project }: ProjectTechStackProps) {
       {/* Purple gradient corners */}
       <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-        {/* Tech Stack Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <Code size={18} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
-            <h3 className="text-white font-medium">Tech Stack</h3>
-          </div>
-          
-          <div className="flex flex-wrap gap-2">
-            {project.techStack && Array.isArray(project.techStack) && project.techStack.map((tech, index) => {
-              // Handle both object and string formats
+
+      <div className="relative z-10">
+        <div className="flex items-center mb-6">
+          <Code size={20} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-3" />
+          <h3 className="text-lg font-bold text-white">Tech Stack</h3>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {project.techStack && Array.isArray(project.techStack) && project.techStack
+            .filter(tech => tech && getTechName(tech))
+            .map((tech, index) => {
               const techName = getTechName(tech);
-              const techIcon = typeof tech === 'object' && tech.icon ? tech.icon : undefined;
-              
+              const techIcon = typeof tech === 'object' && tech && tech.icon ? tech.icon : undefined;
+
               return (
-                <TechBadge 
-                  key={index} 
-                  name={techName} 
-                  icon={techIcon} 
-                  delay={0.4 + (index * 0.05)}
-                />
+                <motion.div
+                  key={index}
+                  className="group relative"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + (index * 0.05) }}
+                  whileHover={{ y: -5 }}
+                >
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4 text-center hover:bg-white/10 transition-all duration-300">
+                    {techIcon ? (
+                      <img src={techIcon} alt={techName} className="w-8 h-8 mx-auto mb-2" />
+                    ) : (
+                      <div className="w-8 h-8 mx-auto mb-2 bg-purple-500/20 rounded-md flex items-center justify-center">
+                        <Code size={16} className="text-purple-300" />
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-300 font-medium">{techName}</p>
+                  </div>
+                </motion.div>
               );
             })}
-          </div>
-        </div>
-        
-        {/* Tools Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <Wrench size={18} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
-            <h3 className="text-white font-medium">Tools Used</h3>
-          </div>
-          
-          <div className="flex flex-wrap gap-2">
-            {project.tools && Array.isArray(project.tools) && project.tools.map((tool, index) => (
-              <motion.span
-                key={index}
-                className="px-3 py-1 text-xs bg-[#1D1D1D] text-gray-300 rounded-full border border-[#333] hover:border-purple-500/50 transition-colors"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + (index * 0.05) }}
-              >
-                {tool}
-              </motion.span>
-            ))}
-          </div>
-        </div>
-        
-        {/* Project Type Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <Layers size={18} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
-            <h3 className="text-white font-medium">Project Type</h3>
-          </div>
-          
-          <motion.div
-            className="bg-[#1D1D1D] rounded-lg p-3 border border-[#333] inline-block"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <p className="text-gray-300 text-sm">{project.projectType || "Project"}</p>
-          </motion.div>
         </div>
       </div>
     </motion.div>
+  );
+}
+
+// Project Info Card Component (Structured Typography)
+function ProjectInfoCard({ project }: { project: Project }) {
+  return (
+    <motion.div
+      className="relative p-6 rounded-2xl bg-[#040406] border-[#1c0333] overflow-hidden"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+    >
+      {/* Purple gradient corners */}
+      <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 space-y-6">
+        {/* Project Type */}
+        <div>
+          <p className="text-xs text-gray-400 mb-1 uppercase tracking-wider">Project Type</p>
+          <p className="text-xl font-bold text-white">{project.projectType || "Project"}</p>
+        </div>
+
+        {/* Role */}
+        {project.role && (
+          <div>
+            <p className="text-xs text-gray-400 mb-1 uppercase tracking-wider">Role</p>
+            <p className="text-lg text-white font-medium">{project.role}</p>
+          </div>
+        )}
+
+        {/* Timeline */}
+        {project.timeline && (
+          <div>
+            <p className="text-xs text-gray-400 mb-1 uppercase tracking-wider">Duration</p>
+            <p className="text-lg text-white font-medium">{project.timeline}</p>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+export default function ProjectTechStack({ project }: ProjectTechStackProps) {
+  if (!project) return null;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <TechStackCard project={project} />
+      <ProjectInfoCard project={project} />
+    </div>
   );
 }
