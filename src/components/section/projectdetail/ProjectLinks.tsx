@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Github, Figma, ExternalLink, FileText } from "lucide-react";
 import { ReactNode } from "react";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 type IconType = {
   type: 'library' | 'image';
@@ -65,10 +66,9 @@ export default function ProjectLinks({ links }: ProjectLinksProps) {
       <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
       
-      <h3 className="text-lg font-bold mb-6 relative z-10">
-        <span className="text-white">PROJECT </span>
-        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">LINKS</span>
-      </h3>
+      <div className="mb-6 relative z-10">
+        <SectionHeader title="Project Links" className="text-left" />
+      </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
         {links?.map((link, index) => (

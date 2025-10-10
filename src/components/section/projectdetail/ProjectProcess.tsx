@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Workflow, FileText, Ruler, Code, TestTube } from "lucide-react";
 import { useState, ReactNode } from "react";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 type ArtifactType = {
   label: string;
@@ -22,7 +23,7 @@ type ProjectProcessProps = {
 
 export default function ProjectProcess({ process, projectType }: ProjectProcessProps) {
   const [activePhase, setActivePhase] = useState(0);
-  
+
   // Icons for different phases
   const phaseIcons: Record<string, ReactNode> = {
     'Research': <FileText size={18} />,
@@ -30,21 +31,9 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
     'Development': <Code size={18} />,
     'Testing': <TestTube size={18} />
   };
-  
+
   // Custom titles based on project type
-  const getProcessTitle = () => {
-    switch (projectType) {
-      case 'UI/UX':
-        return 'DESIGN PROCESS';
-      case 'Web Development':
-        return 'DEVELOPMENT PROCESS';
-      case 'Creative':
-        return 'CREATIVE PROCESS';
-      default:
-        return 'PROJECT PROCESS';
-    }
-  };
-  
+
   return (
     <motion.div
       className="relative p-6 rounded-2xl bg-[#040406] border-[#1c0333] overflow-hidden"
@@ -55,16 +44,11 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
       {/* Purple gradient corners */}
       <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-      
-      <div className="flex items-center mb-6 relative z-10">
-        <Workflow size={20} className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent mr-2" />
-        <h3 className="text-lg font-bold m-0">
-          <span className="text-white">
-            {getProcessTitle()}
-          </span>
-        </h3>
+
+      <div className="mb-6 relative z-10">
+        <SectionHeader title="Project Process" className="text-left" />
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-6 relative z-10">
         {/* Phase tabs */}
         <div className="md:w-1/4">
@@ -72,11 +56,10 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
             {process?.map((phase, index) => (
               <motion.button
                 key={index}
-                className={`flex items-center p-3 rounded-lg text-left w-full transition-all duration-300 ${
-                  activePhase === index 
-                    ? 'bg-white/10 backdrop-blur-sm border border-purple-500/50' 
-                    : 'bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10'
-                }`}
+                className={`flex items-center p-3 rounded-lg text-left w-full transition-all duration-300 ${activePhase === index
+                  ? 'bg-white/10 backdrop-blur-sm border border-purple-500/50'
+                  : 'bg-white/5 backdrop-blur-sm hover:bg-white/10 border border-white/10'
+                  }`}
                 onClick={() => setActivePhase(index)}
                 whileHover={{ x: activePhase === index ? 0 : 3 }}
               >
@@ -90,7 +73,7 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
             ))}
           </div>
         </div>
-        
+
         {/* Phase content */}
         <div className="md:w-3/4">
           {process && process[activePhase] && (
@@ -105,11 +88,11 @@ export default function ProjectProcess({ process, projectType }: ProjectProcessP
                 <h4 className="text-white text-base font-medium mb-3">
                   {process[activePhase].phase}
                 </h4>
-                
+
                 <p className="text-gray-300 text-sm leading-relaxed mb-4">
                   {process[activePhase].description}
                 </p>
-                
+
                 {process[activePhase].artifacts && (
                   <div>
                     <h5 className="text-white text-sm font-medium mb-2">Artifacts</h5>

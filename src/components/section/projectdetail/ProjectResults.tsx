@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { PieChart, TrendingUp, Award, Clock } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState, ReactNode } from "react";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 type ResultType = {
   metric: string;
@@ -35,10 +36,9 @@ export default function ProjectResults({ results }: ProjectResultsProps) {
       <div className="absolute -top-20 -left-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
       
-      <h3 className="text-lg font-bold mb-6 relative z-10">
-        <span className="text-white">RESULTS & </span>
-        <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">IMPACT</span>
-      </h3>
+      <div className="mb-6 relative z-10">
+        <SectionHeader title="Results & Impact" className="text-left" />
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
         {results?.map((result, index) => (

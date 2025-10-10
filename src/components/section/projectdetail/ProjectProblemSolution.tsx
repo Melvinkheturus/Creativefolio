@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import PortableTextComponent from "@/components/ui/PortableTextComponent";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 type ProjectProblemSolutionProps = {
   title: string;
@@ -46,9 +47,9 @@ export default function ProjectProblemSolution({
       )}
 
       <div className={`border-l-2 pl-4 relative z-10`} style={{ borderColor: color }}>
-        <h3 className="text-lg font-bold mb-4">
-          <span className="text-white">{title.toUpperCase()}</span>
-        </h3>
+        <div className="mb-4">
+          <SectionHeader title={title} className="text-left" />
+        </div>
 
         <div className="text-gray-300 text-sm leading-relaxed">
           {content ? (

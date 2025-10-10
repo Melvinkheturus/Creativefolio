@@ -26,8 +26,8 @@ export const casestudyBySlugQuery = groq`
       alt,
       caption,
       title,
-      subtitle,
-      location
+      location,
+      keyFeature
     },
     features[] {
       title,
@@ -424,71 +424,13 @@ export const casestudy = defineType({
               type: 'string',
               description: 'Main title for the showcase item',
             }),
+
             defineField({
-              name: 'subtitle',
-              title: 'Subtitle (Second Line)',
+              name: 'keyFeature',
+              title: 'Key Feature',
               type: 'string',
-              description: 'Secondary title for the showcase item',
-            }),
-            defineField({
-              name: 'location',
-              title: 'Location/Category',
-              type: 'string',
-              description: 'Location or category label',
-            }),
-          ],
-        }),
-      ],
-    }),
-    defineField({
-      name: 'mobileShowcase',
-      title: 'Mobile Showcase',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'image',
-          options: {
-            hotspot: true,
-          },
-          fields: [
-            defineField({
-              name: 'alt',
-              title: 'Alt Text',
-              type: 'string',
-            }),
-            defineField({
-              name: 'caption',
-              title: 'Caption',
-              type: 'string',
-            }),
-          ],
-        }),
-      ],
-    }),
-    defineField({
-      name: 'mobileFeatures',
-      title: 'Mobile Features',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          name: 'mobileFeatureItem',
-          title: 'Mobile Feature Item',
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'title',
-              title: 'Title',
-              type: 'string',
-            }),
-            defineField({
-              name: 'description',
-              title: 'Description',
-              type: 'text',
-            }),
-            defineField({
-              name: 'icon',
-              title: 'Icon',
-              type: 'string',
+              description: 'Short key feature phrase (max 3 words)',
+              validation: (Rule) => Rule.max(20).warning('Keep it short - max 3 words recommended'),
             }),
           ],
         }),

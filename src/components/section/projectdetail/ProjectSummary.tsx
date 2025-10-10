@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import PortableTextComponent from "@/components/ui/PortableTextComponent";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 type ProjectSummaryProps = {
   project: Project;
@@ -26,10 +27,9 @@ export default function ProjectSummary({ project }: ProjectSummaryProps) {
       
       <div className="flex flex-col md:flex-row relative z-10">
         <div className="md:w-1/2 pr-0 md:pr-8 mb-6 md:mb-0">
-          <h3 className="text-lg font-bold mb-4">
-            <span className="text-white">PROJECT </span>
-            <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">OVERVIEW</span>
-          </h3>
+          <div className="mb-4">
+            <SectionHeader title="Project Summary" className="text-left" />
+          </div>
           
           <motion.div 
             className="text-gray-300 text-sm leading-relaxed"
@@ -46,10 +46,9 @@ export default function ProjectSummary({ project }: ProjectSummaryProps) {
         </div>
         
         <div className="md:w-1/2 md:border-l md:border-[#333] md:pl-8">
-          <h3 className="text-lg font-bold mb-4">
-            <span className="text-white">MY </span>
-            <span className="bg-gradient-to-b from-white to-purple-300 bg-clip-text text-transparent">CONTRIBUTION</span>
-          </h3>
+          <div className="mb-4">
+            <SectionHeader title="My Contribution" className="text-left" />
+          </div>
           
           <motion.p 
             className="text-gray-300 text-sm leading-relaxed"
